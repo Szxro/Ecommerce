@@ -6,9 +6,9 @@ namespace Ecommerce.Infrastructure.Common;
 public abstract class BaseWorker<TWorker> : BackgroundService
     where TWorker : class
 {
-    protected readonly ILogger<TWorker> _logger;
+    protected readonly ILogger<BaseWorker<TWorker>> _logger;
 
-    protected BaseWorker(ILogger<TWorker> logger)
+    protected BaseWorker(ILogger<BaseWorker<TWorker>> logger)
     {
         _logger = logger;
     }
