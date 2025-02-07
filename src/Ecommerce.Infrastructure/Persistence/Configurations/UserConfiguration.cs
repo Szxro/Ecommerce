@@ -8,8 +8,18 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasIndex(x => x.Email).IsUnique();
+        builder.OwnsOne(x => x.Email, emailOptions =>
+        {
+            emailOptions.HasIndex(x => x.Value).IsUnique();
 
-        builder.HasIndex(x => x.Username).IsUnique();
+            emailOptions.Property(x => x.Value).HasColumnName("email");
+        });
+
+        builder.OwnsOne(x => x.Username, usernameOptions =>
+        {
+            usernameOptions.HasIndex(x => x.Value).IsUnique();
+
+            usernameOptions.Property(x => x.Value).HasColumnName("username");
+        });
     }
 }
