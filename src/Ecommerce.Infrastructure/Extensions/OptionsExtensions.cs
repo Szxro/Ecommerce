@@ -1,0 +1,27 @@
+﻿using Ecommerce.Infrastructure.Options.Database;
+using Ecommerce.Infrastructure.Options.Validator;
+using Ecommerce.SharedKernel.Contracts;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
+namespace Ecommerce.Infrastructure.Extensions;
+
+public static partial class InfrastructureExtensions
+{
+    public static IServiceCollection AddConfigurableOptions(this IServiceCollection services)
+    {
+        services.ConfigureOptions<DatabaseOptionsSetup>()
+                .AddFluentValidator<DatabaseOptions>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddFluentValidator<TOption>(this IServiceCollection services)
+      where TOption : class, IConfigurationOptions
+    {
+        services.AddSingleton<IValidateOptions<TOption>>(
+            provider => new FluentOptionsValidator<TOption>(provider.GetRequiredService<IServiceScopeFactory>()));
+
+        return services;
+    }
+}
