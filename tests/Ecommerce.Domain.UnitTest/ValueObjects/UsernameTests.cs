@@ -3,7 +3,7 @@
 public class UsernameTests
 {
     [Fact]
-    public void ShouldReturnInvalidUsername()
+    public void IsValid_InvalidUsername_ReturnsFalse()
     {
         string username = "@username_1235''";
 
@@ -13,19 +13,27 @@ public class UsernameTests
     }
 
     [Fact]
-
-    public void InvalidUsernameShouldReturnNull()
+    public void IsValid_NullUsername_ReturnsFalse()
     {
-        string username = "@username_1235''";
+        string? username = null;
 
-        Username.IsValid(username, out Result<Username>? validUsername);
+        bool isValid = Username.IsValid(username, out _);
 
-        Assert.Null(validUsername);
+        Assert.False(isValid);
     }
 
     [Fact]
+    public void IsValid_EmptyUsername_ReturnsFalse()
+    {
+        string username = "";
 
-    public void ShouldReturnUsernameValid()
+        bool isValid = Username.IsValid(username,out _);
+
+        Assert.False(isValid);  
+    }
+
+    [Fact]
+    public void IsValid_ValidUsername_ReturnsTrue()
     {
         string username = "username_12345";
 
@@ -35,12 +43,22 @@ public class UsernameTests
     }
 
     [Fact]
-    public void ValidUsernameShouldNotReturnNull()
+    public void IsValid_ValidUsername_ReturnsUsername()
     {
         string username = "username_12345";
 
         Username.IsValid(username, out Result<Username>? validUsername);
 
-        Assert.NotNull(validUsername);
+        Assert.IsType<Result<Username>>(validUsername);
+    }
+
+    [Fact]
+    public void IsValid_InvalidUsername_ReturnsNull()
+    {
+        string username = "@username_1235''";
+
+        Username.IsValid(username, out Result<Username>? validUsername);
+
+        Assert.Null(validUsername);
     }
 }

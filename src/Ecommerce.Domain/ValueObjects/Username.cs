@@ -16,7 +16,7 @@ public sealed class Username
         Value = value;
     }
 
-    public static bool IsValid(string username, out Result<Username>? validUsername)
+    public static bool IsValid(string? username, out Result<Username>? validUsername)
     {
         validUsername = null;
 

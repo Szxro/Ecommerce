@@ -3,9 +3,22 @@
 public class EmailTests
 {
     [Fact]
-    public void ShouldReturnEmailIsNotValid()
+    public void IsValid_InvalidEmail_ReturnsFalse()
     {
+        // Arrange
         string email = "#0000";
+
+        // Act 
+        bool isEmailValid = Email.IsValid(email, out _);
+
+        // Assert
+        Assert.False(isEmailValid);
+    }
+
+    [Fact]
+    public void IsValid_NullEmail_ReturnsFalse()
+    {
+        string? email = null;
 
         bool isEmailValid = Email.IsValid(email, out _);
 
@@ -13,7 +26,17 @@ public class EmailTests
     }
 
     [Fact]
-    public void ShouldReturnEmailIsValid()
+    public void IsValid_EmptyEmail_ReturnsFalse()
+    {
+        string email = "";
+
+        bool isValid = Email.IsValid(email, out _);
+
+        Assert.False(isValid);
+    }
+
+    [Fact]
+    public void IsValid_ValidEmail_ReturnsTrue()
     {
         string email = "some@mail.com";
 
@@ -23,7 +46,7 @@ public class EmailTests
     }
 
     [Fact]
-    public void InvalidEmailShouldReturnNull()
+    public void IsValid_InvalidEmail_ReturnsNull()
     {
         string email = string.Empty;
 
@@ -33,13 +56,12 @@ public class EmailTests
     }
 
     [Fact]
-
-    public void ValidEmailShouldNotReturnNull()
+    public void IsValid_ValidEmail_ReturnsEmail()
     {
         string email = "email@mail.com";
 
         Email.IsValid(email, out Result<Email>? validEmail);
 
-        Assert.NotNull(validEmail);
+        Assert.IsType<Result<Email>>(validEmail);
     }
 }

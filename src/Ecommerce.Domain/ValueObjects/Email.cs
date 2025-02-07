@@ -16,7 +16,7 @@ public sealed class Email
         Value = value;
     }
 
-    public static bool IsValid(string email, out Result<Email>? validEmail)
+    public static bool IsValid(string? email, out Result<Email>? validEmail)
     {
         validEmail = null;
 
