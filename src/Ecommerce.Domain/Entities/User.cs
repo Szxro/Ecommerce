@@ -1,4 +1,5 @@
-﻿using Ecommerce.SharedKernel.Common;
+﻿using Ecommerce.Domain.ValueObjects;
+using Ecommerce.SharedKernel.Common;
 
 namespace Ecommerce.Domain.Entities;
 
@@ -15,10 +16,9 @@ public sealed class User : Entity
 
     public string LastName { get; set; } = string.Empty;
 
-    // Value Objects?
-    public string Username { get; set; } = string.Empty; // Unique!
+    public Username Username { get; set; } = null!;
 
-    public string Email { get; set; } = string.Empty; // Unique! 
+    public Email Email { get; set; } = null!;
 
     public bool IsEmailVerified { get; set; }
 
