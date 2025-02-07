@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.SharedKernel", "src\Ecommerce.SharedKernel\Ecommerce.SharedKernel.csproj", "{11A0FE5B-ACDE-4344-82D8-2D62CE836EC9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Domain", "src\Ecommerce.Domain\Ecommerce.Domain.csproj", "{DAC10290-3F2E-41F3-99B6-8BA989579E46}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Infrastructure", "src\Ecommerce.Infrastructure\Ecommerce.Infrastructure.csproj", "{08BB0A0D-0DC7-43FA-BE73-6890B7F67A9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Domain.UnitTest", "tests\Ecommerce.Domain.UnitTest\Ecommerce.Domain.UnitTest.csproj", "{08B7C0E3-C359-4D5F-974E-C65FBCBE41BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CE03D3A4-9C44-4A50-9FE6-EFD8E587EDA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C6E21F55-12B7-4BDB-9565-ACE3CF1B52F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,8 +33,18 @@ Global
 		{08BB0A0D-0DC7-43FA-BE73-6890B7F67A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08BB0A0D-0DC7-43FA-BE73-6890B7F67A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08BB0A0D-0DC7-43FA-BE73-6890B7F67A9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08B7C0E3-C359-4D5F-974E-C65FBCBE41BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08B7C0E3-C359-4D5F-974E-C65FBCBE41BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08B7C0E3-C359-4D5F-974E-C65FBCBE41BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08B7C0E3-C359-4D5F-974E-C65FBCBE41BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{11A0FE5B-ACDE-4344-82D8-2D62CE836EC9} = {CE03D3A4-9C44-4A50-9FE6-EFD8E587EDA7}
+		{DAC10290-3F2E-41F3-99B6-8BA989579E46} = {CE03D3A4-9C44-4A50-9FE6-EFD8E587EDA7}
+		{08BB0A0D-0DC7-43FA-BE73-6890B7F67A9D} = {CE03D3A4-9C44-4A50-9FE6-EFD8E587EDA7}
+		{08B7C0E3-C359-4D5F-974E-C65FBCBE41BF} = {C6E21F55-12B7-4BDB-9565-ACE3CF1B52F9}
 	EndGlobalSection
 EndGlobal
