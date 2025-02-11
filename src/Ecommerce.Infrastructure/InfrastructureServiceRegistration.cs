@@ -20,6 +20,7 @@ public static class InfrastructureServiceRegistration
 
         services
             .AddWorkers()
+            .AddStrategies()
             .AddConfigurableOptions();
 
         services.AddDbContext<AppDbContext>((provider, options) =>
