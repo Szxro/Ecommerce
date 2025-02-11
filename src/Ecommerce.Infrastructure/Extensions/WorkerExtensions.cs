@@ -9,6 +9,10 @@ public static partial class InfrastructureExtensions
     {
         services.AddHostedService<DatabaseInitializerWorker>();
 
+        services.AddHostedService<EmailCodeExpirationWorker>();
+
+        services.AddHostedService<RefreshTokenExpirationWorker>();
+
         return services;
     }
 }
