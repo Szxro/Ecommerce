@@ -25,9 +25,10 @@ public static partial class InfrastructureExtensions
         {
             InjectAttribute? attribute = type.GetCustomAttribute<InjectAttribute>();
 
-            Type? interfaceType = type.GetInterfaces().FirstOrDefault();
+            // If the service dont have an interface , the service itself is going to be the serviceType
+            Type interfaceType = type.GetInterfaces().FirstOrDefault() ?? type;
 
-            if (attribute is null || interfaceType is null) continue;
+            if (attribute is null) continue;
 
             switch (attribute.ServiceLifetime)
             {

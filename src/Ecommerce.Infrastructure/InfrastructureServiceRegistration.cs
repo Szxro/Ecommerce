@@ -19,7 +19,6 @@ public static class InfrastructureServiceRegistration
         services.AddValidatorsFromAssembly(typeof(InfrastructureServiceRegistration).Assembly);
 
         services
-            .AddInterceptors()
             .AddWorkers()
             .AddConfigurableOptions();
 

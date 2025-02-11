@@ -2,9 +2,12 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Ecommerce.Infrastructure.Attributes;
 
 namespace Ecommerce.Infrastructure.Persistence.Interceptors;
 
+[Inject(ServiceLifetime.Singleton)]
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
     public override ValueTask<int> SavedChangesAsync(
@@ -46,4 +49,3 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
        string propertyName,
        DateTimeOffset dateTime) => entity.Property(propertyName).CurrentValue = dateTime;
 }
-
