@@ -20,8 +20,9 @@ public static class InfrastructureServiceRegistration
 
         services
             .AddWorkers()
-            .AddStrategies()
-            .AddConfigurableOptions();
+            //.AddStrategies()
+            .AddConfigurableOptions()
+            .AddInterceptors();
 
         services.AddDbContext<AppDbContext>((provider, options) =>
         {
@@ -42,6 +43,8 @@ public static class InfrastructureServiceRegistration
         });
 
         services.RegisterServicesFromAssembly(typeof(InfrastructureServiceRegistration).Assembly);
+
+        services.AddHttpContextAccessor();
 
         return services;
     }
