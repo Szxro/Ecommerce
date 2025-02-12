@@ -26,7 +26,7 @@ public sealed class User : Entity
 
     public bool LockOutEnabled { get; set; } = true;
 
-    public DateTimeOffset LockOutEndAtUtc { get; set; } = new DateTimeOffset(1999,01,01,00,00,00,TimeSpan.Zero);
+    public DateTime LockOutEndAtUtc { get; set; } = new DateTime(1999,01,01,00,00,00);
 
     public int AccessFailedCount { get; set; }
 

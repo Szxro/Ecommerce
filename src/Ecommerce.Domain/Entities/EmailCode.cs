@@ -12,7 +12,7 @@ public sealed class EmailCode : Entity
 
     public bool IsUsed { get; set; }
 
-    public DateTimeOffset ExpirationDateAtUtc { get; set; } = DateTimeOffset.Now.AddMinutes(30);
+    public DateTime ExpirationDateAtUtc { get; set; } = DateTime.Now.AddMinutes(30);
 
     public int UserId { get; set; }
 
