@@ -6,5 +6,5 @@ public abstract class Entity : AuditableEntity
 
     public bool IsDeleted { get; set; }
 
-    public DateTimeOffset DeletedAtUtc { get; set; }
+    public DateTime DeletedAtUtc { get; set; }
 }
