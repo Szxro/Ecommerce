@@ -11,7 +11,7 @@ public class AppDbContext : DbContext
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
-        configurationBuilder.Properties<DateTimeOffset>().HaveColumnType("datetime2");
+        configurationBuilder.Properties<DateTime>().HaveColumnType("datetime2");
 
         base.ConfigureConventions(configurationBuilder);
     }
