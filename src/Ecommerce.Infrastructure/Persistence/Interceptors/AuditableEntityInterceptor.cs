@@ -2,12 +2,9 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Ecommerce.Infrastructure.Attributes;
 
 namespace Ecommerce.Infrastructure.Persistence.Interceptors;
 
-[Inject(ServiceLifetime.Singleton)]
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
     public override ValueTask<int> SavedChangesAsync(
@@ -33,13 +30,13 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         {
             if (entity.State == EntityState.Added)
             {
-                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.CreatedAtUtc), DateTimeOffset.Now);
-                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.ModifiedAtUtc), DateTimeOffset.Now);
+                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.CreatedAtUtc), DateTime.Now);
+                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.ModifiedAtUtc), DateTime.Now);
             }
 
             if (entity.State == EntityState.Modified)
             {
-                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.ModifiedAtUtc), DateTimeOffset.Now);
+                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.ModifiedAtUtc), DateTime.Now);
             }
         }
     }
@@ -47,5 +44,5 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
     private void SetCurrentDatetimeProperty(
        EntityEntry entity,
        string propertyName,
-       DateTimeOffset dateTime) => entity.Property(propertyName).CurrentValue = dateTime;
+       DateTime dateTime) => entity.Property(propertyName).CurrentValue = dateTime;
 }
