@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Infrastructure.Options.Database;
+using Ecommerce.Infrastructure.Options.Hash;
 using Ecommerce.Infrastructure.Options.Jwt;
 using Ecommerce.Infrastructure.Options.Validator;
 using Ecommerce.SharedKernel.Contracts;
@@ -18,6 +19,9 @@ public static partial class InfrastructureExtensions
                 .AddFluentValidator<JwtOptions>();
 
         services.ConfigureOptions<JwtBearerTokenOptions>();
+
+        services.ConfigureOptions<HashOptionsSetup>()
+                .AddFluentValidator<HashOptions>();
 
         return services;
     }
