@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Microsoft.Extensions.Logging;
+using Ecommerce.SharedKernel.Common;
+using Ecommerce.SharedKernel.Contracts;
 
 namespace Ecommerce.Infrastructure.Common;
 
@@ -39,9 +41,17 @@ public sealed class UnitOfWork : IUnitOfWork
     {
         try
         {
-            // Events comming soon....
-            return await _appDbContext.SaveChangesAsync(cancellationToken);
+            int result = await _appDbContext.SaveChangesAsync(cancellationToken);
 
+            List<IDomainEvent> events = _appDbContext.ChangeTracker.Entries<Entity>()
+                                      .Select(x => x.Entity)
+                                      .Where(x => x.DomainEvent.Any())
+                                      .SelectMany(entity => entity.DomainEvent)
+                                      .ToList();
+
+            // TODO: Send the events into the Channel....
+
+            return result;
         }
         catch (Exception ex)
         {
