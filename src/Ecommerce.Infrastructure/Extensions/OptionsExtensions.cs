@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Infrastructure.Options.Database;
+using Ecommerce.Infrastructure.Options.Jwt;
 using Ecommerce.Infrastructure.Options.Validator;
 using Ecommerce.SharedKernel.Contracts;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,11 @@ public static partial class InfrastructureExtensions
     {
         services.ConfigureOptions<DatabaseOptionsSetup>()
                 .AddFluentValidator<DatabaseOptions>();
+
+        services.ConfigureOptions<JwtOptionsSetup>()
+                .AddFluentValidator<JwtOptions>();
+
+        services.ConfigureOptions<JwtBearerTokenOptions>();
 
         return services;
     }
