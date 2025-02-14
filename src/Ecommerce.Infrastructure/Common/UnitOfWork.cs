@@ -53,6 +53,8 @@ public sealed class UnitOfWork : IUnitOfWork
                                       .SelectMany(entity => entity.DomainEvent)
                                       .ToList();
 
+            if (!events.Any()) return result;
+
             foreach (IDomainEvent @event in events)
             {
                 await _eventChannel.AddEventAsync(@event, cancellationToken);
