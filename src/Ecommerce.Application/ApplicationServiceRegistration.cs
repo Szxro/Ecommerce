@@ -20,6 +20,7 @@ public static class ApplicationServiceRegistration
             options.AddOpenBehavior(typeof(RequestPerformancePipelineBehavior<,>));
             options.AddOpenBehavior(typeof(RequestTransactionHandlingBehavior<,>));
             options.AddOpenBehavior(typeof(RequestExceptionHandlingPipelineBehavior<,>));
+            options.AddOpenBehavior(typeof(QueryCachingPipelineBehavior<,>));
         });
 
         return services;
