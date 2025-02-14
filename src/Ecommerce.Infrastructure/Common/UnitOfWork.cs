@@ -8,6 +8,7 @@ using System.Data;
 using Microsoft.Extensions.Logging;
 using Ecommerce.SharedKernel.Common;
 using Ecommerce.SharedKernel.Contracts;
+using Ecommerce.Infrastructure.Channels;
 
 namespace Ecommerce.Infrastructure.Common;
 
@@ -16,13 +17,16 @@ public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _appDbContext;
     private readonly ILogger<AppDbContext> _logger;
+    private readonly DomainEventChannel _eventChannel;
 
     public UnitOfWork(
         AppDbContext appDbContext,
-        ILogger<AppDbContext> logger)
+        ILogger<AppDbContext> logger,
+        DomainEventChannel eventChannel)
     {
         _appDbContext = appDbContext;
         _logger = logger;
+        _eventChannel = eventChannel;
     }
 
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
@@ -49,7 +53,10 @@ public sealed class UnitOfWork : IUnitOfWork
                                       .SelectMany(entity => entity.DomainEvent)
                                       .ToList();
 
-            // TODO: Send the events into the Channel....
+            foreach (IDomainEvent @event in events)
+            {
+                await _eventChannel.AddEventAsync(@event, cancellationToken);
+            }
 
             return result;
         }
