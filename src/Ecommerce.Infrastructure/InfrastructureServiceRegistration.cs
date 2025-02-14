@@ -46,6 +46,8 @@ public static class InfrastructureServiceRegistration
 
         services.AddHttpContextAccessor();
 
+        services.AddMemoryCache(); // By Now is going to be memory cache (later distributed cache with redis)
+
         return services;
     }
 }
