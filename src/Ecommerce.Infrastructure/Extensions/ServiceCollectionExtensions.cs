@@ -25,7 +25,8 @@ public static partial class InfrastructureExtensions
         {
             InjectAttribute? attribute = type.GetCustomAttribute<InjectAttribute>();
 
-            Type? interfaceType = type.GetInterfaces().FirstOrDefault();
+            // The class itselft is going to be the interfaceType
+            Type interfaceType = type.GetInterfaces().FirstOrDefault() ?? type;
 
             if (attribute is null || interfaceType is null) continue;
 
