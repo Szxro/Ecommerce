@@ -29,7 +29,7 @@ public class HashService : IHashService
             Algorithm,
             _hashOptions.HashSize);
 
-        return (Convert.ToBase64String(hash), salt);
+        return (Convert.ToHexString(hash), salt);
     }
 
     public bool VerifyHash(string password, string currentHash, string currentSalt)
