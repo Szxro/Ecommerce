@@ -1,16 +1,37 @@
-﻿using Ecommerce.Infrastructure.Common;
-using Ecommerce.SharedKernel.Contracts;
+﻿using Ecommerce.SharedKernel.Contracts;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Ecommerce.Infrastructure.Options.Smtp;
 
-public class SmtpServerOptionsSetup : BaseOptions<SmtpServerOptions>
+public class SmtpServerOptionsSetup : IPostConfigureOptions<SmtpServerOptions>
 {
-    public SmtpServerOptionsSetup(IConfiguration configuration) : base(configuration) { }
+    private readonly IHostEnvironment _hostEnvironment;
+    private readonly IConfiguration _configuration;
+
+    public SmtpServerOptionsSetup(
+        IHostEnvironment hostEnvironment,
+        IConfiguration configuration)
+    {
+        _hostEnvironment = hostEnvironment;
+        _configuration = configuration;
+    }
+    public void PostConfigure(string? name, SmtpServerOptions options)
+    {
+        string sectionName = _hostEnvironment.IsDevelopment() 
+            ? "SmtpServerDevOptions"
+            : options.SectionName;
+
+        _configuration
+            .GetSection(sectionName)
+            .Bind(options);
+    }
 }
 
 public class SmtpServerOptions : IConfigurationOptions
 {
+    // In this case it represent the production options
     public string SectionName => "SmtpServerOptions";
 
     public string Host { get; set; } = string.Empty;
