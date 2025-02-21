@@ -32,4 +32,10 @@ public class AppDbContext : DbContext
     public DbSet<RefreshToken> RefreshToken => Set<RefreshToken>();
 
     public DbSet<EmailCode> EmailCode => Set<EmailCode>();
+
+    public DbSet<Template> Template => Set<Template>();
+
+    public DbSet<TemplateCategory> TemplateCategory => Set<TemplateCategory>();
+
+    public DbSet<UserTemplate> UserTemplate => Set<UserTemplate>();
 }
