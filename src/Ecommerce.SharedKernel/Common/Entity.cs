@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecommerce.SharedKernel.Common;
 
-public abstract class Entity : AuditableEntity
+public abstract class Entity : AuditableEntity, IEntity
 {
     public int Id { get; set; }
 
