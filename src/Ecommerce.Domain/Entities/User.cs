@@ -10,6 +10,7 @@ public sealed class User : Entity
         Credentials = new HashSet<Credentials>();
         RefreshTokens = new HashSet<RefreshToken>();
         EmailCodes = new HashSet<EmailCode>();
+        Templates = new HashSet<UserTemplate>();
     }
 
     public string FirstName { get; set; } = string.Empty;
@@ -34,5 +35,7 @@ public sealed class User : Entity
 
     public ICollection<RefreshToken> RefreshTokens { get; set; }
 
-    public ICollection<EmailCode> EmailCodes { get; set; }  
+    public ICollection<EmailCode> EmailCodes { get; set; }
+
+    public ICollection<UserTemplate> Templates { get; set; }
 }
