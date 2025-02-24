@@ -38,4 +38,10 @@ public class AppDbContext : DbContext
     public DbSet<TemplateCategory> TemplateCategory => Set<TemplateCategory>();
 
     public DbSet<UserTemplate> UserTemplate => Set<UserTemplate>();
+
+    public DbSet<Variable> Variable => Set<Variable>();
+
+    public DbSet<VariableType> VariableType => Set<VariableType>();
+
+    public DbSet<TemplateVariable> TemplateVariable => Set<TemplateVariable>();
 }
