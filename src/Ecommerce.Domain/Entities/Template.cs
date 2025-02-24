@@ -6,7 +6,8 @@ public class Template : Entity
 {
     public Template()
     {
-        Templates = new HashSet<UserTemplate>();
+        UserTemplates = new HashSet<UserTemplate>();
+        TemplateVariables = new HashSet<TemplateVariable>();
     }
 
     public string Title { get; set; } = string.Empty;
@@ -21,5 +22,7 @@ public class Template : Entity
 
     public TemplateCategory TemplateCategory { get; set; } = null!;
 
-    public ICollection<UserTemplate> Templates { get; set; } 
+    public ICollection<TemplateVariable> TemplateVariables { get; set; }
+
+    public ICollection<UserTemplate> UserTemplates { get; set; } 
 }
