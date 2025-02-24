@@ -20,7 +20,7 @@ public class SendEmailCodeEvent : IDomainEvent
         EmailCode = emailCode;
     }
 
-    public string Category => TemplateCategory.Email;
+    public string Category => TemplateCategory.EmailCode;
 
     public Username Username { get; }
 
