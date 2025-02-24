@@ -2,7 +2,7 @@
 
 public class TemplateCategory
 {
-    public const string Email = "email";
+    public const string EmailCode = "email_code";
 
     public const string LockOut = "lockout";
 }
