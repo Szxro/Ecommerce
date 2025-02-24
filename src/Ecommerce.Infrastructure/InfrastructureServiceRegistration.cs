@@ -32,8 +32,7 @@ public static class InfrastructureServiceRegistration
             {
                 options.CommandTimeout(databaseOptions.CommandTimeout);            
             })
-            .AddInterceptors(provider.GetRequiredService<AuditableEntityInterceptor>())
-            // .UseAsyncSeeding(DatabaseUtility.SeedAsync) TODO: Add default template and categories templates
+            .AddInterceptors(provider.GetRequiredService<AuditableEntityInterceptor>())         
             .UseSnakeCaseNamingConvention();
 
             if (environment.IsDevelopment())
