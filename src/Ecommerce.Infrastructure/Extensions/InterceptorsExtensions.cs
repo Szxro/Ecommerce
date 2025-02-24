@@ -10,6 +10,8 @@ public static partial class InfrastructureExtensions
         // By default the interceptors have an interface call ISaveChangesInterceptor
         services.AddSingleton<AuditableEntityInterceptor>();
 
+        services.AddSingleton<SoftDeleteInterceptor>();
+
         return services;
     }
 }

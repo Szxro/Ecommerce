@@ -32,7 +32,10 @@ public static class InfrastructureServiceRegistration
             {
                 options.CommandTimeout(databaseOptions.CommandTimeout);            
             })
-            .AddInterceptors(provider.GetRequiredService<AuditableEntityInterceptor>())         
+            .AddInterceptors(
+                provider.GetRequiredService<AuditableEntityInterceptor>(),
+                provider.GetRequiredService<SoftDeleteInterceptor>()
+             )         
             .UseSnakeCaseNamingConvention();
 
             if (environment.IsDevelopment())
