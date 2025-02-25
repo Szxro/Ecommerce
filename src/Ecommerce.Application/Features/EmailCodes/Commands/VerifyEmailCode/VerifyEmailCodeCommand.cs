@@ -3,6 +3,7 @@ using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.SharedKernel.Contracts;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
+using Ecommerce.Domain.Events;
 
 namespace Ecommerce.Application.Features.EmailCodes.Commands.VerifyEmailCode;
 
@@ -23,7 +24,12 @@ public class VerifyEmailCodeCommandHandler : ICommandHandler<VerifyEmailCodeComm
 
     public async Task<Result> Handle(VerifyEmailCodeCommand request, CancellationToken cancellationToken)
     {
-        EmailCode? foundCode = await _emailCodeRepository.GetEmailCodeByEmailCode(request.emailCode);
+        if (string.IsNullOrEmpty(request.emailCode) || string.IsNullOrWhiteSpace(request.emailCode))
+        {
+            return Result.Failure(Error.Validation("The email code can't be empty or have white spaces"));
+        }
+
+        EmailCode? foundCode = await _emailCodeRepository.GetEmailCodeByEmailCode(request.emailCode, cancellationToken);
 
         if (foundCode is null)
         {
@@ -38,7 +44,7 @@ public class VerifyEmailCodeCommandHandler : ICommandHandler<VerifyEmailCodeComm
 
         _emailCodeRepository.Update(foundCode);
 
-        // TODO: Welcome message event
+        foundCode.AddEvent(new WelcomeMesageEvent(foundCode.User.Username,foundCode.User.Email));
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
