@@ -5,7 +5,6 @@ using Ecommerce.SharedKernel.Contracts;
 using Ecommerce.SharedKernel.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Fluid;
 using Ecommerce.Application.Utilities;
 
 namespace Ecommerce.Application.Features.Users.EventHandlers;
@@ -15,8 +14,6 @@ public class SendEmailCodeEventHandler : IDomainEventHandler<SendEmailCodeEvent>
     private readonly IEmailService _emailService;
     private readonly ILogger<SendEmailCodeEventHandler> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
-
-    private static readonly FluidParser _parser = new FluidParser();
 
     public SendEmailCodeEventHandler(
         IEmailService emailService,
