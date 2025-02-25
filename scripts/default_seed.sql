@@ -1,3 +1,6 @@
+-- Author: Sebastian Vargas (Szxro)
+-- Description: Inserts default variable types if they do not already exists.
+
 -- DEFAULT VARIABLE TYPES
 IF NOT EXISTS(SELECT 1 FROM variable_type)
 BEGIN
