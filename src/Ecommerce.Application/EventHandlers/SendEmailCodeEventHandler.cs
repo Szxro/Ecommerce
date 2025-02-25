@@ -35,16 +35,18 @@ public class SendEmailCodeEventHandler : IDomainEventHandler<SendEmailCodeEvent>
         // Need to create a scope, because you are using a service outside of the current scope of the application
         using IServiceScope scope = _scopeFactory.CreateScope();
 
+        string templateCategory = ApplicationUtilities.GetTemplateCategoryDescription(notification.Category);
+
         ITemplateRepository templateRepository = scope.ServiceProvider.GetRequiredService<ITemplateRepository>();
 
-        Template? source = await templateRepository.GetActiveTemplateByCategoryAsync(notification.Category, cancellationToken)
-            ?? await templateRepository.GetDefaultTemplateByCategoryAsync(notification.Category, cancellationToken);
+        Template? source = await templateRepository.GetActiveTemplateByCategoryAsync(templateCategory, cancellationToken)
+            ?? await templateRepository.GetDefaultTemplateByCategoryAsync(templateCategory, cancellationToken);
 
         if (source is null)
         {
             _logger.LogError(
                 "No active or default templates was found for category: {templateCategory}",
-                notification.Category);
+                templateCategory);
 
             return; 
         }
@@ -57,7 +59,7 @@ public class SendEmailCodeEventHandler : IDomainEventHandler<SendEmailCodeEvent>
             notification.EmailCode,
         };
 
-        string render = TemplateRender.Render(source.Content, model);
+        string render = ApplicationUtilities.TemplateRender(source.Content, model);
 
         await _emailService.SendEmailAsync(
             new EmailMessage
