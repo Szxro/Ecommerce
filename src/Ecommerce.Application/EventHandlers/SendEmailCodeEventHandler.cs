@@ -6,6 +6,7 @@ using Ecommerce.SharedKernel.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Fluid;
+using Ecommerce.Application.Utilities;
 
 namespace Ecommerce.Application.Features.Users.EventHandlers;
 
@@ -51,7 +52,7 @@ public class SendEmailCodeEventHandler : IDomainEventHandler<SendEmailCodeEvent>
             return; 
         }
 
-        var model = new 
+        object model = new 
         {
             notification.FirstName,
             notification.LastName,
@@ -59,28 +60,14 @@ public class SendEmailCodeEventHandler : IDomainEventHandler<SendEmailCodeEvent>
             notification.EmailCode,
         };
 
-        if (_parser.TryParse(source.Content, out IFluidTemplate? template, out string error))
+        string render = TemplateRender.Render(source.Content, model);
+
+        await _emailService.SendEmailAsync(
+            new EmailMessage
         {
-            TemplateContext context = new TemplateContext(model);
-
-            string render = template.Render(context);
-
-            await _emailService.SendEmailAsync(
-                new EmailMessage
-                {
-                    Subject = source.Title,
-                    Body = render,
-                    ToAddress = notification.Email.Value
-                });
-        }
-        else
-        {
-            _logger.LogError(
-                "Template parsing failed. Error: {error}, Category: {category}",
-                error,
-                notification.Category);
-
-            return;
-        }
+            Subject = source.Title,
+            Body = render,
+            ToAddress = notification.Email.Value
+        });        
     }
 }
