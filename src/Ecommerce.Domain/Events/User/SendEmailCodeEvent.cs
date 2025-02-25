@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Domain.ValueObjects;
-using Ecommerce.SharedKernel.Consts;
 using Ecommerce.SharedKernel.Contracts;
+using Ecommerce.SharedKernel.Enums;
 
 namespace Ecommerce.Domain.Events.User;
 
@@ -20,7 +20,7 @@ public class SendEmailCodeEvent : IDomainEvent
         EmailCode = emailCode;
     }
 
-    public string Category => TemplateCategory.EmailCode;
+    public TemplateCategory Category => TemplateCategory.EmailCode;
 
     public Username Username { get; }
 

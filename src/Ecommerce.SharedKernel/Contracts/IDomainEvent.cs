@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using Ecommerce.SharedKernel.Enums;
+using MediatR;
 
 namespace Ecommerce.SharedKernel.Contracts;
 
 public interface IDomainEvent : INotification
 {
-    public string Category { get; }
+    public TemplateCategory Category { get; }
 };
