@@ -4,6 +4,7 @@ using Ecommerce.SharedKernel.Contracts;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
 using Ecommerce.Domain.Events;
+using Category = Ecommerce.SharedKernel.Enums.TemplateCategory;
 
 namespace Ecommerce.Application.Features.EmailCodes.Commands.VerifyEmailCode;
 
@@ -44,7 +45,14 @@ public class VerifyEmailCodeCommandHandler : ICommandHandler<VerifyEmailCodeComm
 
         _emailCodeRepository.Update(foundCode);
 
-        foundCode.AddEvent(new WelcomeMesageEvent(foundCode.User.Username,foundCode.User.Email));
+        foundCode.AddEvent(
+            new TemplateRenderEvent(
+                Category.WelcomeMessage,
+                new
+                {
+                    Username = foundCode.User.Username.Value
+                },
+          foundCode.User.Email));
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -9,27 +9,26 @@ using Ecommerce.SharedKernel.Common;
 
 namespace Ecommerce.Application.EventHandlers;
 
-// TODO: REFACTOR REPETITIVE LOGIC
-class WelcomeMesageEventHandler : IDomainEventHandler<WelcomeMesageEvent>
+class TemplateRenderEventHandler : IDomainEventHandler<TemplateRenderEvent>
 {
     private readonly IEmailService _emailService;
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<WelcomeMesageEventHandler> _logger;
+    private readonly ILogger<TemplateRenderEventHandler> _logger;
 
-    public WelcomeMesageEventHandler(
+    public TemplateRenderEventHandler(
         IEmailService emailService,
         IServiceScopeFactory scopeFactory,
-        ILogger<WelcomeMesageEventHandler> logger)
+        ILogger<TemplateRenderEventHandler> logger)
     {
         _emailService = emailService;
         _scopeFactory = scopeFactory;
         _logger = logger;
     }
-    public async Task Handle(WelcomeMesageEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(TemplateRenderEvent notification, CancellationToken cancellationToken)
     {        
         _logger.LogInformation(
-            "Sending a email code for a user with a username '{username}' and with an email '{email}'",
-            notification.UserName.Value,
+            "Sending an email with the template category: '{category}' for an email: '{email}'",
+            notification.Category.ToString(),
             notification.Email.Value);
        
         using IServiceScope scope = _scopeFactory.CreateScope();
@@ -50,12 +49,7 @@ class WelcomeMesageEventHandler : IDomainEventHandler<WelcomeMesageEvent>
             return;
         }
 
-        object model = new
-        {
-            Username = notification.UserName.Value
-        };
-
-        string render = ApplicationUtilities.TemplateRender(source.Content, model);
+        string render = ApplicationUtilities.TemplateRender(source.Content, notification.Model);
 
         await _emailService.SendEmailAsync(
             new EmailMessage

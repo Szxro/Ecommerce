@@ -1,7 +1,8 @@
 ﻿using Ecommerce.Domain.Contracts;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
-using Ecommerce.Domain.Events.User;
+using Ecommerce.Domain.Events;
+using Category = Ecommerce.SharedKernel.Enums.TemplateCategory;
 using Ecommerce.Domain.ValueObjects;
 using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.SharedKernel.Contracts;
@@ -74,7 +75,18 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand>
             });
 
         newUser.AddEvent(
-            new SendEmailCodeEvent(newUser.Username,newUser.FirstName, newUser.LastName,newUser.Email,emailCode));
+            new TemplateRenderEvent(
+                Category.EmailCode,
+                new
+                { 
+                    newUser.FirstName,
+                    newUser.LastName,
+                    Email = newUser.Email.Value,
+                    EmailCode = emailCode
+                },
+                newUser.Email
+            )
+        );
 
         _userRepository.Add(newUser);
 
