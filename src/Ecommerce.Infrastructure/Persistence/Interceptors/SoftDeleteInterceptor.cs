@@ -25,7 +25,6 @@ public class SoftDeleteInterceptor : SaveChangesInterceptor
         IEnumerable<EntityEntry<ISoftDeletable>> entries = dbContext.ChangeTracker
                                                                     .Entries<ISoftDeletable>()
                                                                     .Where(x => x.State == EntityState.Deleted);
-
         if (!entries.Any())
         {
             return;
