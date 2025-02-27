@@ -5,7 +5,9 @@ namespace Ecommerce.Domain.Contracts;
 public interface IUserRepository 
     : IRepositoryWriter<User>
 {
-    Task<bool> IsUsernameNotUnique(string username,CancellationToken cancellationToken = default);
+    Task<bool> IsUsernameNotUniqueAsync(string username,CancellationToken cancellationToken = default);
 
-    Task<bool> IsEmailNotUnique(string email,CancellationToken cancellationToken = default);
+    Task<bool> IsEmailNotUniqueAsync(string email, CancellationToken cancellationToken = default);
+
+    Task<User?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default);
 }

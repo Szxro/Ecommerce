@@ -14,12 +14,19 @@ public class UserRepository
 {
     public UserRepository(AppDbContext appDbContext) : base(appDbContext) { }
 
-    public Task<bool> IsEmailNotUnique(string email, CancellationToken cancellationToken = default)
+    public async Task<User?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default)
+    {
+        return await _appDbContext.User
+                                  .Include(x => x.Credentials)
+                                  .Where(x => x.Username.Value == username).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public Task<bool> IsEmailNotUniqueAsync(string email, CancellationToken cancellationToken = default)
     {
         return _appDbContext.User.AsNoTracking().AnyAsync(x => x.Email.Value == email, cancellationToken);
     }
 
-    public Task<bool> IsUsernameNotUnique(string username, CancellationToken cancellationToken = default)
+    public Task<bool> IsUsernameNotUniqueAsync(string username, CancellationToken cancellationToken = default)
     {
         return _appDbContext.User.AsNoTracking().AnyAsync(x => x.Username.Value == username, cancellationToken);
     }
