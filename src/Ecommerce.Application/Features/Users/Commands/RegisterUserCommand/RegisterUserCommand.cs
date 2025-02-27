@@ -2,28 +2,28 @@
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
 using Ecommerce.Domain.Events;
-using Category = Ecommerce.SharedKernel.Enums.TemplateCategory;
 using Ecommerce.Domain.ValueObjects;
 using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.SharedKernel.Contracts;
+using Category = Ecommerce.SharedKernel.Enums.TemplateCategory;
 
-namespace Ecommerce.Application.Features.Users.Commands.CreateUserCommand;
+namespace Ecommerce.Application.Features.Users.Commands.RegisterUserCommand;
 
-public record CreateUserCommand(
+public record RegisterUserCommand(
     string firstName,
     string lastName,
     string username,
     string email,
     string password) : ICommand;
 
-public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand>
+public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
 {
     private readonly IUserRepository _userRepository;
     private readonly IHashService _hashService;
     private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateUserCommandHandler(
+    public RegisterUserCommandHandler(
         IUserRepository userRepository,
         IHashService hashService,
         IEmailService emailService,
@@ -34,16 +34,16 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand>
         _emailService = emailService;
         _unitOfWork = unitOfWork;
     }
-    public async Task<Result> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         if (!Email.IsValid(request.email,out Result<Email>? validEmail) 
-                || await _userRepository.IsEmailNotUnique(request.email, cancellationToken))
+                || await _userRepository.IsEmailNotUniqueAsync(request.email, cancellationToken))
         {
             return Result.Failure(UserErrors.EmailNotUniqueOrInvalid);
         }
 
         if (!Username.IsValid(request.username,out Result<Username>? validUsername) 
-                || await _userRepository.IsUsernameNotUnique(request.username, cancellationToken))
+                || await _userRepository.IsUsernameNotUniqueAsync(request.username, cancellationToken))
         {
             return Result.Failure(UserErrors.UsernameNotUniqueOrInvalid);
         }

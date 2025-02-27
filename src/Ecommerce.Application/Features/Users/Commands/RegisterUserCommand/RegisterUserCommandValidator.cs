@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Ecommerce.Application.Features.Users.Commands.CreateUserCommand;
+namespace Ecommerce.Application.Features.Users.Commands.RegisterUserCommand;
 
-public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
+public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
 {
-    public CreateUserCommandValidator()
+    public RegisterUserCommandValidator()
     {
         RuleFor(command => command.email)
           .NotNull().WithMessage("The email address can't be null.")
