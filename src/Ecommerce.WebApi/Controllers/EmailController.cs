@@ -1,4 +1,5 @@
-﻿using Ecommerce.Application.Features.EmailCodes.Commands.VerifyEmailCode;
+﻿using Ecommerce.Application.Features.EmailCodes.Commands.ResendEmailCode;
+using Ecommerce.Application.Features.EmailCodes.Commands.VerifyEmailCode;
 using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.WebApi.Common;
 using Ecommerce.WebApi.Extensions;
@@ -21,7 +22,6 @@ public class EmailController : ControllerBase
     [HttpGet("verify-email-code")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IResult> VerifyEmailCode([FromQuery] string emailCode)
     {
         Result result = await _sender.Send(new VerifyEmailCodeCommand(emailCode));
@@ -29,5 +29,17 @@ public class EmailController : ControllerBase
         return result.Match(
             onSuccess: () => Results.Ok(),
             onFailure: CustomResult.Problem);
+    }
+
+    [HttpGet("resend-email-code")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IResult> ResendEmailCode([FromQuery] string username)
+    {
+        Result result = await _sender.Send(new ResendEmailCodeCommand(username));
+
+        return result.Match(
+            onSuccess:() => Results.Ok(),
+            onFailure:CustomResult.Problem);
     }
 }
