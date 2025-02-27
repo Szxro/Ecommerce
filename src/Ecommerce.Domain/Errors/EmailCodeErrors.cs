@@ -15,4 +15,7 @@ public static class EmailCodeErrors
 
     public static Error EmailCodeAlreadyExpired(string code)
         => Error.Validation($"The email code '{code}' is already expired.");
+
+    public static Error UserAlreadyVerified(string username)
+        => Error.Validation($"The current user with the username '{username}' is already verified");
 }
