@@ -13,10 +13,24 @@ public class EmailCodeRepository : GenericRepository<EmailCode>, IEmailCodeRepos
 {
     public EmailCodeRepository(AppDbContext appDbContext) : base(appDbContext) { }
 
+    public async Task<EmailCode?> GetCurrentActiveEmailCodeByUsernameAsync(string username, CancellationToken cancellationToken = default)
+    {
+        return await _appDbContext.EmailCode
+                                  .Where(x => x.User.Username.Value == username && !x.IsUsed && !x.IsExpired && !x.IsRevoked)
+                                  .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<EmailCode?> GetEmailCodeByEmailCode(string emailCode,CancellationToken cancellationToken = default)
     {
         return await _appDbContext.EmailCode
                                   .Include(x => x.User)
                                   .FirstOrDefaultAsync(x => x.Code == emailCode,cancellationToken);
+    }
+
+    public async Task<bool> IsUserEmailCodeUsedByUsernameAsync(string username, CancellationToken cancellationToken = default)
+    {
+        return await _appDbContext.EmailCode
+                                  .AsNoTracking()
+                                  .AnyAsync(x => x.User.Username.Value == username && x.IsUsed, cancellationToken);
     }
 }
