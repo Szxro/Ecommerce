@@ -20,7 +20,7 @@ public class EmailCodeRepository : GenericRepository<EmailCode>, IEmailCodeRepos
                                   .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<EmailCode?> GetEmailCodeByEmailCode(string emailCode,CancellationToken cancellationToken = default)
+    public async Task<EmailCode?> GetEmailCodeByEmailCodeAsync(string emailCode,CancellationToken cancellationToken = default)
     {
         return await _appDbContext.EmailCode
                                   .Include(x => x.User)
