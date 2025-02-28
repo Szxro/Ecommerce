@@ -30,7 +30,7 @@ public class VerifyEmailCodeCommandHandler : ICommandHandler<VerifyEmailCodeComm
             return Result.Failure(Error.Validation("The email code can't be empty or have white spaces"));
         }
 
-        EmailCode? foundCode = await _emailCodeRepository.GetEmailCodeByEmailCode(request.emailCode, cancellationToken);
+        EmailCode? foundCode = await _emailCodeRepository.GetEmailCodeByEmailCodeAsync(request.emailCode, cancellationToken);
 
         if (foundCode is null)
         {
