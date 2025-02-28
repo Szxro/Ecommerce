@@ -5,20 +5,25 @@ namespace Ecommerce.Infrastructure.Strategies;
 
 public class EmailCodeExpirationStrategy : IExpiredStrategy<EmailCode>
 {
-    public EmailCodeExpirationStrategy()
+    private readonly IEmailCodeRepository _emailCodeRepository;
+
+    public EmailCodeExpirationStrategy(IEmailCodeRepository emailCodeRepository)
     {
-        
+        _emailCodeRepository = emailCodeRepository;
     }
 
-    public Task<List<EmailCode>> GetExpiredEntitiesAsync(
+    public async Task<List<EmailCode>> GetExpiredEntitiesAsync(
         DateTime currentDateTime,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _emailCodeRepository.GetExpiredEmailCodesAsync(currentDateTime, cancellationToken);
     }
 
     public void MarkEntitiesAsExpired(List<EmailCode> entities)
     {
-        throw new NotImplementedException();
+        foreach (EmailCode entity in entities)
+        {
+            entity.IsExpired = true;
+        }
     }
 }

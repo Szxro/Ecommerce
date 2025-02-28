@@ -5,20 +5,25 @@ namespace Ecommerce.Infrastructure.Strategies;
 
 public class RefreshTokenExpirationStrategy : IExpiredStrategy<RefreshToken>
 {
-    public RefreshTokenExpirationStrategy()
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
+
+    public RefreshTokenExpirationStrategy(IRefreshTokenRepository refreshTokenRepository)
     {
-        
+        _refreshTokenRepository = refreshTokenRepository;
     }
 
-    public Task<List<RefreshToken>> GetExpiredEntitiesAsync(
+    public async Task<List<RefreshToken>> GetExpiredEntitiesAsync(
         DateTime currentDateTime,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _refreshTokenRepository.GetExpiredRefreshTokensAsync(currentDateTime, cancellationToken);
     }
 
     public void MarkEntitiesAsExpired(List<RefreshToken> entities)
     {
-        throw new NotImplementedException();
+        foreach (RefreshToken entity in entities)
+        {
+            entity.IsExpired = true;
+        }
     }
 }
