@@ -31,7 +31,7 @@ public class EmailCodeExpirationWorker : BaseWorker<EmailCodeExpirationWorker>
 
             ExpirationStrategyService<EmailCode> strategyService = scope.ServiceProvider.GetRequiredService<ExpirationStrategyService<EmailCode>>();
 
-            await strategyService.ExecuteAsync(DateTime.Now, cancellationToken);
+            await strategyService.ExecuteAsync(DateTime.UtcNow, cancellationToken);
         }
     }
 }

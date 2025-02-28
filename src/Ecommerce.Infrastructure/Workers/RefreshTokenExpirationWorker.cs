@@ -31,7 +31,7 @@ public class RefreshTokenExpirationWorker : BaseWorker<RefreshTokenExpirationWor
 
             ExpirationStrategyService<RefreshToken> strategyService = scope.ServiceProvider.GetRequiredService<ExpirationStrategyService<RefreshToken>>();
 
-            await strategyService.ExecuteAsync(DateTime.Now, cancellationToken);
+            await strategyService.ExecuteAsync(DateTime.UtcNow, cancellationToken);
         }
     }
 }
