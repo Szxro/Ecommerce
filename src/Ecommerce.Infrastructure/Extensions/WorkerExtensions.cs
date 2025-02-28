@@ -11,9 +11,9 @@ public static partial class InfrastructureExtensions
 
         services.AddHostedService<DomainEventDispatcherWorker>();
 
-        //services.AddHostedService<EmailCodeExpirationWorker>();
+        services.AddHostedService<EmailCodeExpirationWorker>();
 
-        //services.AddHostedService<RefreshTokenExpirationWorker>();
+        services.AddHostedService<RefreshTokenExpirationWorker>();
 
         return services;
     }

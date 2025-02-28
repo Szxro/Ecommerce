@@ -20,7 +20,7 @@ public static class InfrastructureServiceRegistration
 
         services
             .AddWorkers()
-            //.AddStrategies()
+            .AddStrategies()
             .AddConfigurableOptions()
             .AddInterceptors();
 
