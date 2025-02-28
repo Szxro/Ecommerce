@@ -82,7 +82,13 @@ public class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, TokenRe
 
         string refreshToken = _tokenService.GenerateRefreshToken();
 
-        foundUser.RefreshTokens.Add(new RefreshToken { Token = refreshToken });
+        RefreshToken? newRefreshToken = new RefreshToken
+        {
+            Token = refreshToken,
+            User = foundUser
+        };
+
+        _refreshTokenRepository.Add(newRefreshToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
