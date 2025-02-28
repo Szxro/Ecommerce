@@ -27,6 +27,13 @@ public class EmailCodeRepository : GenericRepository<EmailCode>, IEmailCodeRepos
                                   .FirstOrDefaultAsync(x => x.Code == emailCode,cancellationToken);
     }
 
+    public async Task<List<EmailCode>> GetExpiredEmailCodesAsync(DateTime currentTime, CancellationToken cancellationToken = default)
+    {
+        return await _appDbContext.EmailCode
+                                  .Where(x => x.ExpirationDateAtUtc <= currentTime && !x.IsUsed && !x.IsRevoked && !x.IsExpired)
+                                  .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> IsUserEmailCodeUsedByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         return await _appDbContext.EmailCode

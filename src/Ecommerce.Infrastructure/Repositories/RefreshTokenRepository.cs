@@ -14,6 +14,13 @@ public class RefreshTokenRepository
 {
     public RefreshTokenRepository(AppDbContext appDbContext) : base(appDbContext) { }
 
+    public async Task<List<RefreshToken>> GetExpiredRefreshTokensAsync(DateTime currentTime, CancellationToken cancellationToken = default)
+    {
+        return await _appDbContext.RefreshToken
+                                  .Where(x => x.ExpirationDateAtUtc <= currentTime && !x.IsExpired && !x.IsUsed && !x.IsRevoked)
+                                  .ToListAsync(cancellationToken);
+    }
+
     public async Task<RefreshToken?> GetUnusedUserRefreshTokenByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         return await _appDbContext.RefreshToken
