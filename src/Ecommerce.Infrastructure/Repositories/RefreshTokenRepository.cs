@@ -17,7 +17,15 @@ public class RefreshTokenRepository
     public async Task<RefreshToken?> GetUnusedUserRefreshTokenByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         return await _appDbContext.RefreshToken
-                                  .Where(x => x.User.Username.Value == username)
+                                  .Where(x => x.User.Username.Value == username && !x.IsUsed && !x.IsExpired && !x.IsRevoked)
+                                  .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<RefreshToken?> GetValidRefreshTokenAsync(string refreshToken, string username,CancellationToken cancellationToken = default)
+    {
+        return await _appDbContext.RefreshToken
+                                  .Include(x => x.User)
+                                  .Where(x => x.User.Username.Value == username && x.Token == refreshToken && !x.IsExpired && !x.IsRevoked && !x.IsUsed)
                                   .FirstOrDefaultAsync(cancellationToken);
     }
 }
