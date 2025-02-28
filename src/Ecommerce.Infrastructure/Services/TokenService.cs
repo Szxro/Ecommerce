@@ -18,6 +18,7 @@ public class TokenService : ITokenService
 {
     private readonly ILogger<TokenService> _logger;
     private readonly JwtOptions _jwtOptions;
+    private readonly TokenValidationParameters _validationParameters;
 
     private static readonly string Algorithm = SecurityAlgorithms.HmacSha256;
     private static readonly string JwtClaimEmailVerified = "is_email_verified";
@@ -29,6 +30,15 @@ public class TokenService : ITokenService
     {
         _logger = logger;
         _jwtOptions = options.Value;
+        _validationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = _jwtOptions.ValidateAudience,
+            ValidateIssuer = _jwtOptions.ValidateIssuer,
+            ValidateLifetime = false, // to not have a lifetime exception
+            ValidIssuer = _jwtOptions.ValidIssuer,
+            ValidAudience = _jwtOptions.ValidAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
+        };
     }
 
     public string GenerateToken(User user, double lifeTime = 10)
@@ -93,5 +103,19 @@ public class TokenService : ITokenService
         });
 
         return claims;
+    }
+
+    public async Task<(bool isValid, ClaimsIdentity? claims)> ValidateToken(string token)
+    {
+        JsonWebTokenHandler handler = new JsonWebTokenHandler();
+
+        TokenValidationResult validationResult = await handler.ValidateTokenAsync(token, _validationParameters);
+
+        if (validationResult.Exception is not null)
+        {
+            return (false, null);
+        }
+
+        return (true, validationResult.ClaimsIdentity);
     }
 }
