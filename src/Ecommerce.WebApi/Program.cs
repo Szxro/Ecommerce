@@ -1,9 +1,13 @@
 using Ecommerce.Infrastructure;
 using Ecommerce.Application;
 using Ecommerce.WebApi.Extensions;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 {
+    // Adding Serilog
+    builder.Host.UseSerilog((host, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(host.Configuration));
+
     // Add services to the container.
     builder.Services
            .AddPresentation(builder.Environment)
@@ -22,6 +26,8 @@ WebApplication app = builder.Build();
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+
+    app.UseSerilogRequestLogging();
 
     app.UseHttpsRedirection();
 
