@@ -4,20 +4,12 @@ on:
     branches:
       - dev
   workflow_dispatch:
+env:
+  DOTNET_VERSION: ${{secrets.DOTNET_VERSION}}
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Setup dotnet 8.0.0
-        uses: actions/setup-dotnet@v4
-        with: 
-          dotnet_version: 8.0.0
-      - name: Display dotnet version
-        run: dotnet --version
-      - name: Build project
-        run: dotnet build Ecommerce.sln
-      - name: Test project
-        run: dotnet test
+      - name: Display variable information
+        run: echo "The value => $DOTNET_VERSION"
   
