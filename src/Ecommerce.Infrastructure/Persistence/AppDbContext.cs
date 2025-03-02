@@ -44,4 +44,8 @@ public class AppDbContext : DbContext
     public DbSet<VariableType> VariableType => Set<VariableType>();
 
     public DbSet<TemplateVariable> TemplateVariable => Set<TemplateVariable>();
+
+    public DbSet<Image> Image => Set<Image>();
+
+    public DbSet<UserImage> UserImage => Set<UserImage>();
 }
