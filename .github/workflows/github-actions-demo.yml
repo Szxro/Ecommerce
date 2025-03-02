@@ -1,13 +1,12 @@
-name: Build & Test 
+name: Build & Test
 on: 
   push:
     branches: [dev]
 env:
   DOTNET_VERSION: ${{secrets.DOTNET_VERSION}}
-jobs:
+jobs: 
   build:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     steps:
-      - name: Display dotnet variable version
-        run: echo "The variable version is $DOTNET_VERSION"
-
+      - name: Display DOTNET VARIABLE info
+        run: echo "Value => $DOTNET_VERSION"
