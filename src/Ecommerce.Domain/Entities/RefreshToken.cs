@@ -12,7 +12,7 @@ public sealed class RefreshToken : Entity
 
     public bool IsUsed { get; set; }
 
-    public DateTimeOffset ExpirationDateAtUtc { get; set; } = DateTimeOffset.Now.AddMinutes(30);
+    public DateTime ExpirationDateAtUtc { get; set; } = DateTime.Now.AddMinutes(30);
 
     public int UserId { get; set; }
 

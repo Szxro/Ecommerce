@@ -10,6 +10,8 @@ public sealed class User : Entity
         Credentials = new HashSet<Credentials>();
         RefreshTokens = new HashSet<RefreshToken>();
         EmailCodes = new HashSet<EmailCode>();
+        Templates = new HashSet<UserTemplate>();
+        UserImages = new HashSet<UserImage>();
     }
 
     public string FirstName { get; set; } = string.Empty;
@@ -26,7 +28,7 @@ public sealed class User : Entity
 
     public bool LockOutEnabled { get; set; } = true;
 
-    public DateTimeOffset LockOutEndAtUtc { get; set; } = new DateTimeOffset(1999,01,01,00,00,00,TimeSpan.Zero);
+    public DateTime LockOutEndAtUtc { get; set; } = new DateTime(1999,01,01,00,00,00);
 
     public int AccessFailedCount { get; set; }
 
@@ -34,5 +36,9 @@ public sealed class User : Entity
 
     public ICollection<RefreshToken> RefreshTokens { get; set; }
 
-    public ICollection<EmailCode> EmailCodes { get; set; }  
+    public ICollection<EmailCode> EmailCodes { get; set; }
+
+    public ICollection<UserTemplate> Templates { get; set; }
+
+    public ICollection<UserImage> UserImages { get; set; }
 }

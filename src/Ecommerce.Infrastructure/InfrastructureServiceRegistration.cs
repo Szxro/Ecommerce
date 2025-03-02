@@ -19,9 +19,10 @@ public static class InfrastructureServiceRegistration
         services.AddValidatorsFromAssembly(typeof(InfrastructureServiceRegistration).Assembly);
 
         services
-            .AddInterceptors()
             .AddWorkers()
-            .AddConfigurableOptions();
+            .AddStrategies()
+            .AddConfigurableOptions()
+            .AddInterceptors();
 
         services.AddDbContext<AppDbContext>((provider, options) =>
         {
@@ -31,7 +32,10 @@ public static class InfrastructureServiceRegistration
             {
                 options.CommandTimeout(databaseOptions.CommandTimeout);            
             })
-            .AddInterceptors(provider.GetRequiredService<AuditableEntityInterceptor>())
+            .AddInterceptors(
+                provider.GetRequiredService<AuditableEntityInterceptor>(),
+                provider.GetRequiredService<SoftDeleteInterceptor>()
+             )         
             .UseSnakeCaseNamingConvention();
 
             if (environment.IsDevelopment())
@@ -42,6 +46,10 @@ public static class InfrastructureServiceRegistration
         });
 
         services.RegisterServicesFromAssembly(typeof(InfrastructureServiceRegistration).Assembly);
+
+        services.AddHttpContextAccessor();
+
+        services.AddMemoryCache(); // By Now is going to be memory cache (later distributed cache with redis)
 
         return services;
     }

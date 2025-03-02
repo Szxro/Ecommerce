@@ -11,7 +11,7 @@ public class AppDbContext : DbContext
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
-        configurationBuilder.Properties<DateTimeOffset>().HaveColumnType("datetime2");
+        configurationBuilder.Properties<DateTime>().HaveColumnType("datetime2");
 
         base.ConfigureConventions(configurationBuilder);
     }
@@ -32,4 +32,20 @@ public class AppDbContext : DbContext
     public DbSet<RefreshToken> RefreshToken => Set<RefreshToken>();
 
     public DbSet<EmailCode> EmailCode => Set<EmailCode>();
+
+    public DbSet<Template> Template => Set<Template>();
+
+    public DbSet<TemplateCategory> TemplateCategory => Set<TemplateCategory>();
+
+    public DbSet<UserTemplate> UserTemplate => Set<UserTemplate>();
+
+    public DbSet<Variable> Variable => Set<Variable>();
+
+    public DbSet<VariableType> VariableType => Set<VariableType>();
+
+    public DbSet<TemplateVariable> TemplateVariable => Set<TemplateVariable>();
+
+    public DbSet<Image> Image => Set<Image>();
+
+    public DbSet<UserImage> UserImage => Set<UserImage>();
 }

@@ -7,17 +7,18 @@ namespace Ecommerce.Infrastructure.Persistence.Interceptors;
 
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
-    public override ValueTask<int> SavedChangesAsync(
-        SaveChangesCompletedEventData eventData,
-        int result,
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
+
         if (eventData.Context is not null)
         {
             UpdateAuditableEntities(eventData.Context);
         }
 
-        return base.SavedChangesAsync(eventData, result, cancellationToken);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
     private void UpdateAuditableEntities(DbContext dbContext)
@@ -30,13 +31,13 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         {
             if (entity.State == EntityState.Added)
             {
-                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.CreatedAtUtc), DateTimeOffset.Now);
-                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.ModifiedAtUtc), DateTimeOffset.Now);
+                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.CreatedAtUtc), DateTime.UtcNow);
+                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.ModifiedAtUtc), DateTime.UtcNow);
             }
 
             if (entity.State == EntityState.Modified)
             {
-                SetCurrentDatetimeProperty(entity, nameof(AuditableEntity.ModifiedAtUtc), DateTimeOffset.Now);
+                SetCurrentDatetimeProperty(entity, nameof(Entity.ModifiedAtUtc), DateTime.UtcNow);
             }
         }
     }
@@ -44,6 +45,5 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
     private void SetCurrentDatetimeProperty(
        EntityEntry entity,
        string propertyName,
-       DateTimeOffset dateTime) => entity.Property(propertyName).CurrentValue = dateTime;
+       DateTime dateTime) => entity.Property(propertyName).CurrentValue = dateTime;
 }
-

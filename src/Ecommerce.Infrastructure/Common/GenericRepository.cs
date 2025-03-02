@@ -1,12 +1,12 @@
 ﻿using Ecommerce.Infrastructure.Persistence;
-using Ecommerce.SharedKernel.Common;
+using Ecommerce.SharedKernel.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Ecommerce.Infrastructure.Common;
 
 public abstract class GenericRepository<TEntity>
-    where TEntity : Entity
+    where TEntity : class, IEntity
 {
     protected readonly AppDbContext _appDbContext;
 

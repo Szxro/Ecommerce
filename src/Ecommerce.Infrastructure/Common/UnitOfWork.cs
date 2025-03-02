@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Microsoft.Extensions.Logging;
+using Ecommerce.SharedKernel.Common;
+using Ecommerce.SharedKernel.Contracts;
+using Ecommerce.Infrastructure.Channels;
 
 namespace Ecommerce.Infrastructure.Common;
 
@@ -14,13 +17,16 @@ public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _appDbContext;
     private readonly ILogger<AppDbContext> _logger;
+    private readonly DomainEventChannel _eventChannel;
 
     public UnitOfWork(
         AppDbContext appDbContext,
-        ILogger<AppDbContext> logger)
+        ILogger<AppDbContext> logger,
+        DomainEventChannel eventChannel)
     {
         _appDbContext = appDbContext;
         _logger = logger;
+        _eventChannel = eventChannel;
     }
 
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
@@ -39,9 +45,22 @@ public sealed class UnitOfWork : IUnitOfWork
     {
         try
         {
-            // Events comming soon....
-            return await _appDbContext.SaveChangesAsync(cancellationToken);
+            int result = await _appDbContext.SaveChangesAsync(cancellationToken);
 
+            List<IDomainEvent> events = _appDbContext.ChangeTracker.Entries<Entity>()
+                                      .Select(x => x.Entity)
+                                      .Where(x => x.DomainEvent.Any())
+                                      .SelectMany(entity => entity.DomainEvent)
+                                      .ToList();
+
+            if (!events.Any()) return result;
+
+            foreach (IDomainEvent @event in events)
+            {
+                await _eventChannel.AddEventAsync(@event, cancellationToken);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
