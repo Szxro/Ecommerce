@@ -128,11 +128,11 @@ public class LoginUserCommandTests
     {
         User user = CreateUser(Command.username,true);
 
-        user.Credentials.Add(new Credentials {SaltValue = "124453",HashValue = "13214",IsActive = true });
+        user.Credentials.Add(new Credentials { HashValue = "", SaltValue = "", IsActive = true });
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
-        _hashService.VerifyHash(Command.password, user.Credentials.First().HashValue, user.Credentials.First().SaltValue).Returns(false);
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
 
         Result<TokenResponse> result = await _handler.Handle(Command, default);
 
@@ -144,11 +144,11 @@ public class LoginUserCommandTests
     {
         User user = CreateUser(Command.username, true);
 
-        user.Credentials.Add(new Credentials { SaltValue = "124453", HashValue = "13214", IsActive = true });
+        user.Credentials.Add(new Credentials { HashValue = "", SaltValue = "", IsActive = true });
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
-        _hashService.VerifyHash(Command.password, user.Credentials.First().HashValue, user.Credentials.First().SaltValue).Returns(false);
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>() ).Returns(false);
 
         await _handler.Handle(Command, default);
 
@@ -160,11 +160,11 @@ public class LoginUserCommandTests
     {
         User user = CreateUser(Command.username, true);
 
-        user.Credentials.Add(new Credentials { SaltValue = "124453", HashValue = "13214", IsActive = true });
+        user.Credentials.Add(new Credentials { HashValue = "",SaltValue = "",IsActive = true });
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
-        _hashService.VerifyHash(Command.password, user.Credentials.First().HashValue, user.Credentials.First().SaltValue).Returns(false);
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
 
         await _handler.Handle(Command, default);
 
@@ -176,12 +176,12 @@ public class LoginUserCommandTests
     {
         User user = CreateUser(Command.username, true);
 
-        user.Credentials.Add(new Credentials { SaltValue = "124453", HashValue = "13214", IsActive = true });
+        user.Credentials.Add(new Credentials { HashValue = "", SaltValue = "", IsActive = true });
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
-        _hashService.VerifyHash(Command.password, user.Credentials.First().HashValue, user.Credentials.First().SaltValue).Returns(false);
-
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
+        
         await _handler.Handle(Command, default);
 
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
