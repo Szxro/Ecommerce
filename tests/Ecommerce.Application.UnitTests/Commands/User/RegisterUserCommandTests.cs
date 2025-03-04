@@ -24,6 +24,7 @@ public class RegisterUserCommandTests
 
     [Theory]
     [InlineData("someemail.com")]
+    [InlineData("someeeema...il.com")]
     public async Task Handle_Should_ReturnError_WhenEmailIsInvalid(string email)
     {
         RegisterUserCommand command = Command with { email = email };
