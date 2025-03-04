@@ -12,8 +12,9 @@ public class LoginUserCommandTests
 	private readonly LoginUserCommandHandler _handler;
 
 	private static readonly LoginUserCommand Command = new LoginUserCommand("username","somepassword");
+    private static readonly DateTime DefaultDateTime = new DateTime(1999, 01, 01, 00, 00, 00);
 
-	public LoginUserCommandTests()
+    public LoginUserCommandTests()
 	{
 		_userRepository = Substitute.For<IUserRepository>();
 		_hashService = Substitute.For<IHashService>();
@@ -42,7 +43,7 @@ public class LoginUserCommandTests
 	[Fact]
 	public async Task Handle_Should_ReturnsError_WhenUserIsLockout()
 	{
-        User user = CreateUser("someusername", true, lockoutEnd: DateTime.UtcNow.AddMinutes(5));
+        User user = CreateUser(true, lockoutEnd: DateTime.UtcNow.AddMinutes(5));
 
 		_userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -52,9 +53,9 @@ public class LoginUserCommandTests
 	}
 
 	[Fact]
-	public async Task Handle_Should_ReturnError_WhenUserFailedCountIsBiggerOrEqualToThree()
+	public async Task Handle_Should_ReturnsError_WhenUserFailedCountIsBiggerOrEqualToThree()
 	{
-        User user = CreateUser("someusername", true, 3);
+        User user = CreateUser(true, 3);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -66,7 +67,7 @@ public class LoginUserCommandTests
 	[Fact]
 	public async Task Handle_Should_CallUserRepository_WhenUserFailedCountIsBiggerOrEqualToThree()
 	{
-        User user = CreateUser(Command.username, true, 3);
+        User user = CreateUser(true, 3);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -78,7 +79,7 @@ public class LoginUserCommandTests
 	[Fact]
 	public async Task Handle_Should_CallSaveChanges_WhenUserFailedCountIsBiggerOrEqualToThree()
 	{
-        User user = CreateUser("someusername", true, 3);
+        User user = CreateUser(true, 3);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -90,19 +91,19 @@ public class LoginUserCommandTests
     [Fact]
     public async Task Handle_Should_LockOut_WhenUserFailedCountIsBiggerOrEqualtoThree()
     {
-        User user = CreateUser("someusername", true, 3);
+        User user = CreateUser(true, 3);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
         await _handler.Handle(Command, default);
 
-        Assert.NotEqual(new DateTime(1999, 01, 01, 00, 00, 00), user.LockOutEndAtUtc);
+        Assert.NotEqual(DefaultDateTime, user.LockOutEndAtUtc);
     }
 
     [Fact]
     public async Task Handle_Should_ResetFailedCount_WhenUserFailedCountIsBiggerOrEqualtoThree()
     {
-        User user = CreateUser("someusername", true, 3);
+        User user = CreateUser(true, 3);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -114,7 +115,7 @@ public class LoginUserCommandTests
     [Fact]
     public async Task Handle_Should_AddAnEvent_WhenTheUserIsLockout()
     {
-        User user = CreateUser("someusername", true, 3);
+        User user = CreateUser(true,3);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -126,9 +127,7 @@ public class LoginUserCommandTests
     [Fact]
     public async Task Handle_Should_ReturnsError_WhenTheCredentialsAreInvalid()
     {
-        User user = CreateUser(Command.username,true);
-
-        user.Credentials.Add(new Credentials { HashValue = "", SaltValue = "", IsActive = true });
+        User user = CreateUser(true);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -142,9 +141,7 @@ public class LoginUserCommandTests
     [Fact]
     public async Task Handle_Should_IncreaseFailCount_WhenTheCredentialsAreInvalid()
     {
-        User user = CreateUser(Command.username, true);
-
-        user.Credentials.Add(new Credentials { HashValue = "", SaltValue = "", IsActive = true });
+        User user = CreateUser(true);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -158,9 +155,7 @@ public class LoginUserCommandTests
     [Fact]
     public async Task Handle_Should_CallUserRepository_WhenTheCredentialsAreInvalid()
     {
-        User user = CreateUser(Command.username, true);
-
-        user.Credentials.Add(new Credentials { HashValue = "",SaltValue = "",IsActive = true });
+        User user = CreateUser(true);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -174,9 +169,7 @@ public class LoginUserCommandTests
     [Fact]
     public async Task Handle_Should_CallSaveChanges_WhenTheCredentialsAreInvalid()
     {
-        User user = CreateUser(Command.username, true);
-
-        user.Credentials.Add(new Credentials { HashValue = "", SaltValue = "", IsActive = true });
+        User user = CreateUser(true);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
@@ -187,19 +180,111 @@ public class LoginUserCommandTests
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
-
-    private User CreateUser(string username, bool lockoutEnabled = false, int failedCount = 0, DateTime? lockoutEnd = null)
+    [Fact]
+    public async Task Handle_Should_MarkAsRevoked_WhenARefreshTokenIsFound()
     {
-        Username.IsValid(username, out Result<Username>? validUsername);
+        User user = CreateUser(true);
+
+        _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
+
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+
+        _refreshTokenRepository.GetUnusedUserRefreshTokenByUsernameAsync(Arg.Any<string>(), CancellationToken.None).Returns(new RefreshToken { });
+
+        await _handler.Handle(Command, default);
+
+        _refreshTokenRepository.Received(1).Update(Arg.Any<RefreshToken>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_ResetFailedAttempts_WhenUserIsValid()
+    {
+        User user = CreateUser(true);
+
+        _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
+
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+
+        await _handler.Handle(Command, default);
+
+        _userRepository.Received(1).Update(Arg.Any<User>());
+
+        Assert.Equal(0, user.AccessFailedCount);
+    }
+
+    [Fact]
+    public async Task Handle_Should_CallRefreshTokenRepository_WhenUserIsValid()
+    {
+        User user = CreateUser(true);
+       
+        _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
+
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+
+        await _handler.Handle(Command, default);
+
+        _refreshTokenRepository.Received(1).Add(Arg.Any<RefreshToken>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_CallSaveChanges_WhenUserIsValid()
+    {
+        User user = CreateUser(true);
+
+        _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
+
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+
+        await _handler.Handle(Command, default);
+
+        await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_ReturnsSucess_WhenUserIsValid()
+    {
+        User user = CreateUser(true);
+
+        _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
+
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+
+        Result<TokenResponse> result = await _handler.Handle(Command, default);
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task Handle_Should_ReturnsToken_WhenUserLogsInSuccessfully()
+    {
+        User user = CreateUser(true);
+
+        _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
+
+        _hashService.VerifyHash(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+
+        _tokenService.GenerateToken(Arg.Any<User>()).Returns("12345");
+
+        _tokenService.GenerateRefreshToken().Returns("6788");
+
+        Result<TokenResponse> result = await _handler.Handle(Command, CancellationToken.None);
+
+        Assert.NotNull(result.Value);
+    }
+
+    private User CreateUser(bool lockoutEnabled = false, int failedCount = 0, DateTime? lockoutEnd = null, string? username = null)
+    {
+        Username.IsValid(username ?? Command.username, out Result<Username>? validUsername);
 
         return new User
         {
             FirstName = "Sebastian",
             LastName = "Vargas",
+            Credentials = new HashSet<Credentials> { new Credentials { HashValue = "", SaltValue = "", IsActive = true } },
             Username = validUsername!.Value,
             LockOutEnabled = lockoutEnabled,
             AccessFailedCount = failedCount,
-            LockOutEndAtUtc = lockoutEnd ?? new DateTime(1999, 01, 01, 00, 00, 00),           
+            LockOutEndAtUtc = lockoutEnd ?? new DateTime(1999, 01, 01, 00, 00, 00),
         };
     }
 }
