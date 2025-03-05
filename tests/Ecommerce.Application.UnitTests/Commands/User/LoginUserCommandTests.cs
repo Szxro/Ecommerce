@@ -1,8 +1,9 @@
 ﻿using Ecommerce.Application.Features.Users.Commands.LoginUserCommand;
+using Ecommerce.Application.UnitTests.Helpers;
 
 namespace Ecommerce.Application.UnitTests.Commands.Users;
 
-public class LoginUserCommandTests
+public class LoginUserCommandTests : IDisposable // Context Clean Up
 {
 	private readonly IUserRepository _userRepository;
 	private readonly IHashService _hashService;
@@ -12,22 +13,19 @@ public class LoginUserCommandTests
 	private readonly LoginUserCommandHandler _handler;
 
 	private static readonly LoginUserCommand Command = new LoginUserCommand("username","somepassword");
-    private static readonly DateTime DefaultDateTime = new DateTime(1999, 01, 01, 00, 00, 00);
-
     public LoginUserCommandTests()
     {
-		_userRepository = Substitute.For<IUserRepository>();
-		_hashService = Substitute.For<IHashService>();
-		_unitOfWork = Substitute.For<IUnitOfWork>();
-		_tokenService = Substitute.For<ITokenService>();
-		_refreshTokenRepository = Substitute.For<IRefreshTokenRepository>();
+        _userRepository = Substitute.For<IUserRepository>();
+        _hashService = Substitute.For<IHashService>();
+        _unitOfWork = Substitute.For<IUnitOfWork>();
+        _tokenService = Substitute.For<ITokenService>();
+        _refreshTokenRepository = Substitute.For<IRefreshTokenRepository>();
 
-		_handler = new LoginUserCommandHandler(
-            _userRepository,
-            _unitOfWork,
-            _hashService,
-            _tokenService,
-            _refreshTokenRepository);
+        _handler = new LoginUserCommandHandler(_userRepository,
+                                               _unitOfWork,
+                                               _hashService,
+                                               _tokenService,
+                                               _refreshTokenRepository);
     }
 
 	[Fact]
@@ -91,13 +89,15 @@ public class LoginUserCommandTests
     [Fact]
     public async Task Handle_Should_LockOut_WhenUserFailedCountIsBiggerOrEqualtoThree()
     {
+        SystemTimeUtc.Set(new DateTime(1999, 01, 01, 00, 00, 00));
+
         User user = CreateUser(true, 3);
 
         _userRepository.GetUserByUsernameAsync(Arg.Is<string>(e => e == Command.username)).Returns(user);
 
         await _handler.Handle(Command, default);
 
-        Assert.NotEqual(DefaultDateTime, user.LockOutEndAtUtc);
+        Assert.NotEqual(SystemTimeUtc.Now, user.LockOutEndAtUtc);
     }
 
     [Fact]
@@ -276,6 +276,8 @@ public class LoginUserCommandTests
     {
         Username.IsValid(username ?? Command.username, out Result<Username>? validUsername);
 
+        SystemTimeUtc.Set(lockoutEnd ?? new DateTime(1999, 01, 01, 00, 00, 00));
+
         return new User
         {
             FirstName = "Sebastian",
@@ -284,7 +286,13 @@ public class LoginUserCommandTests
             Username = validUsername!.Value,
             LockOutEnabled = lockoutEnabled,
             AccessFailedCount = failedCount,
-            LockOutEndAtUtc = lockoutEnd ?? new DateTime(1999, 01, 01, 00, 00, 00),
+            LockOutEndAtUtc = SystemTimeUtc.Now,
         };
+    }
+
+    public void Dispose()
+    {
+        // Reset date at the end of every of each test
+        SystemTimeUtc.Reset();
     }
 }
