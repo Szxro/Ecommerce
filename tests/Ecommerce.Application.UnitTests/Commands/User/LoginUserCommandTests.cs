@@ -15,7 +15,7 @@ public class LoginUserCommandTests
     private static readonly DateTime DefaultDateTime = new DateTime(1999, 01, 01, 00, 00, 00);
 
     public LoginUserCommandTests()
-	{
+    {
 		_userRepository = Substitute.For<IUserRepository>();
 		_hashService = Substitute.For<IHashService>();
 		_unitOfWork = Substitute.For<IUnitOfWork>();
@@ -28,7 +28,7 @@ public class LoginUserCommandTests
             _hashService,
             _tokenService,
             _refreshTokenRepository);
-	}
+    }
 
 	[Fact]
 	public async Task Handle_Should_ReturnsError_WhenUserIsNotFound()
