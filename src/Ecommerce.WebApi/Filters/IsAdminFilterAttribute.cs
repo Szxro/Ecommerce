@@ -4,7 +4,7 @@ using Microsoft.Net.Http.Headers;
 
 namespace Ecommerce.WebApi.Filters;
 
-public class IsAdminAttribute : ActionFilterAttribute
+public class IsAdminFilterAttribute : ActionFilterAttribute
 {
     // NOTE: If i want to use dependency injection a need to register the filter in the DI container;
  
