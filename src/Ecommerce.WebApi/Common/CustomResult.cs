@@ -1,6 +1,7 @@
 ﻿using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.SharedKernel.Enums;
 using Ecommerce.Application.Common.DTOs.Response;
+using Ecommerce.Application.Common.Errors;
 
 namespace Ecommerce.WebApi.Common;
 

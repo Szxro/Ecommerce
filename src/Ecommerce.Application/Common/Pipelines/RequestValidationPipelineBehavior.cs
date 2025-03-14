@@ -5,6 +5,7 @@ using FluentValidation.Results;
 using MediatR;
 using ValidationException = Ecommerce.Application.Common.Exceptions.ValidationException;
 using System.Reflection;
+using Ecommerce.Application.Common.Errors;
 
 namespace Ecommerce.Application.Common.Pipelines;
 
@@ -40,13 +41,13 @@ public class RequestValidationPipelineBehavior<TRequest, TResponse>
                 #pragma warning disable CS8600
                 #pragma warning disable CS8603
                 return (TResponse)failureMethod.Invoke(null,
-                                                       [CreateValidationError(failures)]);
+                                                       [new ValidationError(failures)]);
             }
         }
 
         if (typeof(TResponse) == typeof(Result))
         {
-            return (TResponse)(object)Result.Failure(CreateValidationError(failures));
+            return (TResponse)(object)Result.Failure(new ValidationError(failures));
         }
 
         throw new ValidationException(failures);
@@ -68,6 +69,4 @@ public class RequestValidationPipelineBehavior<TRequest, TResponse>
                                                                   .ToArray();
         return validationFailures;
     }
-    private static ValidationError CreateValidationError(ValidationFailure[] failures)
-            => new ValidationError(failures.Select(x => Error.Validation(x.ErrorMessage)).ToArray());
 }
