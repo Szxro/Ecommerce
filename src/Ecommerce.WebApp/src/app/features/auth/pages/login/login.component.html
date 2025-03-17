@@ -1,1 +1,15 @@
-<p>login works!</p>
+<!--TODO: CREATE A DIRECTIVE TO GENERATE AN SPAN WITH THE ERROR MESSAGE OF THE INPUT-->
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <label for="username">Username: </label>
+  <input type="text" id="username" formControlName="username"/>
+
+  <label for="password">Password: </label>
+  <input type="password" id="password" formControlName="password"/>
+  <button type="submit" [disabled]="!loginForm.valid">Login</button>
+</form>
+
+<div>
+  <p>New to Ecommerce?
+      <a routerLink="/auth/register">Create an account</a>
+  </p>
+</div>
