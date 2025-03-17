@@ -1,1 +1,31 @@
-<p>register works!</p>
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <label for="firstName">Firstname: </label>
+  <input type="text" id="firstName" formControlName="firstName"/>
+
+  <label for="lastName">Lastname: </label>
+  <input type="text" id="lastName" formControlName="lastName"/>
+
+  <label for="userName">Username: </label>
+  <input type="text" id="userName" formControlName="username"/>
+
+  <label for="email">Email: </label>
+  <input type="email" id="email" formControlName="email"/>
+
+  <label for="password">Password: </label>
+  <input type="password" id="password" formControlName="password"/>
+
+  <label for="confirmPassword">Confirm password: </label>
+  <input type="password" id="confirmPassword" formControlName="confirmPassword"/>
+
+  <button type="submit" [disabled]="!registerForm.valid">Register</button>
+</form>
+
+
+<!--Login callout-->
+<div>
+  <p>Already have an account in Ecommerce?
+      <a routerLink="/auth/login">Log in</a>
+  </p>
+</div>
+
+<pre>{{registerForm.value | json}}</pre>
