@@ -6,6 +6,7 @@ import { catchError, EMPTY } from 'rxjs';
 import { ErrorResponse } from '../../../../core/models/responses/error-response.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { CustomValidators } from '../../../../shared/validators/custom-validators';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 })
 export class LoginComponent {
   readonly loginForm = this._formBuilder.nonNullable.group({
-    username: ['',[Validators.required,Validators.minLength(3),Validators.maxLength(20)]],
+    username: ['',[Validators.required,Validators.minLength(3),Validators.maxLength(20),CustomValidators.usernameFormat]],
     password: ['',[Validators.required]]
   });
 

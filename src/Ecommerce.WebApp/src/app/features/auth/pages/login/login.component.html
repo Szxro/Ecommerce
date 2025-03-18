@@ -1,10 +1,12 @@
-<!--TODO: CREATE A DIRECTIVE TO GENERATE AN SPAN WITH THE ERROR MESSAGE OF THE INPUT-->
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <label for="username">Username: </label>
   <input type="text" id="username" formControlName="username"/>
+  <span errorMessage [target]="loginForm.controls.username"></span>
 
   <label for="password">Password: </label>
   <input type="password" id="password" formControlName="password"/>
+  <span errorMessage [target]="loginForm.controls.password"></span>
+
   <button type="submit" [disabled]="!loginForm.valid">Login</button>
 </form>
 

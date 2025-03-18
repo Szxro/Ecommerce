@@ -5,6 +5,7 @@ import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
 import { ErrorResponse } from '../../../../core/models/responses/error-response.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { CustomValidators } from '../../../../shared/validators/custom-validators';
 
 @Component({
   selector: 'app-register',
@@ -15,10 +16,12 @@ export class RegisterComponent implements OnDestroy {
   readonly registerForm = this._formBuilder.nonNullable.group({
     firstName:['',[Validators.required,Validators.minLength(1)]],
     lastName: ['',[Validators.required,Validators.minLength(1)]],
-    username: ['',[Validators.required,Validators.minLength(3),Validators.maxLength(20)]],
+    username: ['',[Validators.required,Validators.minLength(3),Validators.maxLength(20),CustomValidators.usernameFormat]],
     email:    ['',[Validators.required,Validators.email]],
-    password: ['',[Validators.required,Validators.minLength(6)]],
+    password: ['',[Validators.required,Validators.minLength(6),CustomValidators.passwordStrength]],
     confirmPassword: ['',Validators.required]
+  },{
+    validators: [CustomValidators.passwordMustMatch]
   });
 
   private readonly _onDestroy$ = new Subject<void>();
@@ -49,7 +52,7 @@ export class RegisterComponent implements OnDestroy {
     )
     .subscribe({
       next: () =>{
-        this._toastService.sucess({ message:"You successfully created an account on PulseHub!!" });
+        this._toastService.sucess({ message:"You successfully created an account on Ecommerce!!" });
         this._router.navigateByUrl('/auth/login');
       },
       complete: () => this.registerForm.reset()
