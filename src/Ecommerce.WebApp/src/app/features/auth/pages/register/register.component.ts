@@ -19,9 +19,7 @@ export class RegisterComponent implements OnDestroy {
     username: ['',[Validators.required,Validators.minLength(3),Validators.maxLength(20),CustomValidators.usernameFormat]],
     email:    ['',[Validators.required,Validators.email]],
     password: ['',[Validators.required,Validators.minLength(6),CustomValidators.passwordStrength]],
-    confirmPassword: ['',Validators.required]
-  },{
-    validators: [CustomValidators.passwordMustMatch]
+    confirmPassword: ['',[Validators.required, CustomValidators.passwordMustMatch]]
   });
 
   private readonly _onDestroy$ = new Subject<void>();
