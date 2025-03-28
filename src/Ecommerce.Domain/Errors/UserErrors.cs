@@ -11,7 +11,7 @@ public static class UserErrors
             => Error.Validation("Username is not valid or is already registered.");
 
     public static Error UserNotFoundByUsername
-        => Error.Validation("The user by the username provided was not found.");
+        => Error.NotFound("The user by the username provided was not found.");
 
     public static Error UserInvalidCredentials(int attempts)
         => Error.Validation($"The provided credentials are incorrect,retry count {attempts}/3");
