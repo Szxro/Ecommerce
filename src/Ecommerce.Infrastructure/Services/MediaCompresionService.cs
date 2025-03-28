@@ -10,7 +10,6 @@ using System.Drawing.Imaging;
 using Encoder = System.Drawing.Imaging.Encoder;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace Ecommerce.Infrastructure.Services;
 
 [Inject(ServiceLifetime.Transient)]
@@ -19,10 +18,6 @@ public class MediaCompresionService : IMediaCompressionService
     private readonly IConfiguration _configuration;
 
     private readonly ILogger<MediaCompresionService> _logger;
-
-    private static readonly long MaxImageSize = 2 * 1024 * 1024; // 2MB in bytes (2 * 1,048,576 = 2,097,152);
-
-    private static readonly string[] AcceptedImageExtensions = [".jpeg", ".png", ".jpg"];
 
     public MediaCompresionService(IConfiguration configuration,ILogger<MediaCompresionService> logger)
     {
@@ -38,11 +33,6 @@ public class MediaCompresionService : IMediaCompressionService
         if (!IsPathValid(path))
         {
             throw new InvalidOperationException($"Invalid or missing media storage path. Current value: '{path ?? "null"}'");
-        }
-
-        if (!IsFileValid(fileLength, extension))
-        {
-            return Result<CompressionResult>.Failure(Error.Validation("The file size or extension is not allowed."));
         }
 
         // If the directory dont exists, create it. 
@@ -145,10 +135,5 @@ public class MediaCompresionService : IMediaCompressionService
     private bool IsPathValid(string? path)
     {
         return string.IsNullOrWhiteSpace(path) || Path.IsPathFullyQualified(path!);
-    }
-
-    private bool IsFileValid(long fileLength, string extension)
-    {
-        return fileLength > MaxImageSize || !AcceptedImageExtensions.Contains(extension);
     }
 }
