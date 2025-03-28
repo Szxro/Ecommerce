@@ -8,7 +8,7 @@ using Ecommerce.WebApi.Common;
 
 namespace Ecommerce.WebApi.Controllers;
 
-[Route("api/token")]
+[Route("api/tokens")]
 [ApiController]
 public class TokenController : ControllerBase
 {
@@ -21,7 +21,7 @@ public class TokenController : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpPost("regenerate-token")]
+    [HttpPost("regenerate")]
     public async Task<IResult> RegenerateToken(RegenerateTokenCommand regenerateTokenCommand)
     {
         Result<TokenResponse> result = await _sender.Send(regenerateTokenCommand);
