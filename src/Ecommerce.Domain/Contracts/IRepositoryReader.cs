@@ -5,5 +5,5 @@ namespace Ecommerce.Domain.Contracts;
 public interface IRepositoryReader<TEntity>
     where TEntity : IEntity
 {
-    Task<TEntity?> GetById(int id);
+    Task<TEntity?> GetById(int id, CancellationToken cancellationToken = default);
 }
