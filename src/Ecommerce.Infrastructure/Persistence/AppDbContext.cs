@@ -48,4 +48,10 @@ public class AppDbContext : DbContext
     public DbSet<Image> Image => Set<Image>();
 
     public DbSet<UserImage> UserImage => Set<UserImage>();
+
+    public DbSet<Country> Country => Set<Country>();
+
+    public DbSet<Address> Address => Set<Address>();
+
+    public DbSet<UserAddress> UserAddress => Set<UserAddress>();
 }
