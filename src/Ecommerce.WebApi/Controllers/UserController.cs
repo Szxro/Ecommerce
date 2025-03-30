@@ -2,6 +2,8 @@
 using Ecommerce.Application.Features.Users.Commands.LoginUserCommand;
 using Ecommerce.Application.Features.EmailCodes.Commands.ResendEmailCode;
 using Ecommerce.Application.Features.EmailCodes.Commands.VerifyEmailCode;
+using Ecommerce.Application.Features.Users.Commands.UploadImageCommand;
+using Ecommerce.Application.Features.Users.Commands.CreateAddressCommand;
 using Ecommerce.Application.Common.DTOs.Response;
 using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.WebApi.Common;
@@ -9,11 +11,11 @@ using Ecommerce.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Ecommerce.Application.Features.Users.Commands.UploadImageCommand;
 
 namespace Ecommerce.WebApi.Controllers;
 
 [Route("api/users")]
+[Authorize]
 [ApiController]
 public class UserController : ControllerBase
 {
@@ -26,6 +28,7 @@ public class UserController : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<IResult> RegisterUser(RegisterUserCommand userCommand)
     {
@@ -39,6 +42,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IResult> LoginUser(LoginUserCommand loginUserCommand)
     {
@@ -49,10 +53,11 @@ public class UserController : ControllerBase
             onFailure: CustomResult.Problem);
     }
 
-    [HttpGet("verify-email")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [AllowAnonymous]
+    [HttpGet("verify-email")]
     public async Task<IResult> VerifyEmailCode([FromQuery] string emailCode)
     {
         Result result = await _sender.Send(new VerifyEmailCodeCommand(emailCode));
@@ -62,9 +67,10 @@ public class UserController : ControllerBase
             onFailure: CustomResult.Problem);
     }
 
-    [HttpPost("{username}/resend-email")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [AllowAnonymous]
+    [HttpPost("{username}/resend-email")]
     public async Task<IResult> ResendEmailCode([FromRoute] string username)
     {
         Result result = await _sender.Send(new ResendEmailCodeCommand(username));
@@ -74,7 +80,6 @@ public class UserController : ControllerBase
             onFailure: CustomResult.Problem);
     }
 
-    [Authorize]
     [HttpPost("upload-image")]
     public async Task<IResult> UploadImage(IFormFile formFile)
     {
@@ -82,6 +87,16 @@ public class UserController : ControllerBase
 
         return result.Match(
             onSuccess: Results.NoContent,
+            onFailure: CustomResult.Problem);
+    }
+
+    [HttpPost("addresses")]
+    public async Task<IResult> CreateUserAddress(CreateAddressCommand addressCommand)
+    {
+        Result result = await _sender.Send(addressCommand);
+
+        return result.Match(
+            onSuccess: Results.Created,
             onFailure: CustomResult.Problem);
     }
 }
