@@ -15,15 +15,18 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
     private readonly AppDbContext _appDbContext;
     private readonly ILogger<DatabaseServiceInitializer> _logger;
     private readonly RestCountryService _restCountryService;
+    private readonly IExponentialBackoffService _exponentialBackoffService;
 
     public DatabaseServiceInitializer(
         AppDbContext appDbContext,
         ILogger<DatabaseServiceInitializer> logger,
-        RestCountryService restCountryService)
+        RestCountryService restCountryService,
+        IExponentialBackoffService exponentialBackoffService)
     {
         _appDbContext = appDbContext;
         _logger = logger;
         _restCountryService = restCountryService;
+        _exponentialBackoffService = exponentialBackoffService;
     }
 
     public async Task CanConnectAsync(CancellationToken cancellationToken = default)
@@ -68,9 +71,11 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
 
             if (!await _appDbContext.Set<Country>().AnyAsync(cancellationToken))
             {
-                RestCountryResponse[] response = await _restCountryService.GetCountriesInfoAsync(cancellationToken);
+                RestCountryResponse[]? response = await _exponentialBackoffService.RetryWithBackoff(
+                    () => _restCountryService.GetCountriesInfoAsync(cancellationToken),
+                    cancellationToken: cancellationToken);
 
-                List<Country> countries = response.Select(x => new Country { Name = x.Name.Common }).ToList();
+                List<Country> countries = response!.Select(x => new Country { Name = x.Name.Common }).ToList();
 
                 _appDbContext.Set<Country>().AddRange(countries);
 

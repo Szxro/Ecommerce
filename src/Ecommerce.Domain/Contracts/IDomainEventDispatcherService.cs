@@ -5,7 +5,5 @@ namespace Ecommerce.Domain.Contracts;
 
 public interface IDomainEventDispatcherService
 {
-    Task PublishDomainEvent(IDomainEvent @event, CancellationToken cancellationToken = default);
-
-    Task RetryPublishDomainEvent(IDomainEvent @event, BackOffOptions? options = default, CancellationToken cancellationToken = default);
+    Task PublishDomainEvent(IDomainEvent @event, CancellationToken cancellationToken = default);    
 }

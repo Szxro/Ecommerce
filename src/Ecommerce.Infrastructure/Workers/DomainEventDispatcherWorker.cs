@@ -24,16 +24,7 @@ public class DomainEventDispatcherWorker : BaseWorker<DomainEventDispatcherWorke
     {
         await foreach (IDomainEvent @event in _eventChannel.ReadAllAsync(cancellationToken))
         {
-            try
-            {
-                await _dispatcherService.PublishDomainEvent(@event, cancellationToken);
-            }
-            catch
-            {
-                _logger.LogError("Failed to publish the domain event {eventName}, retrying....", @event.GetType().Name);
-
-                await _dispatcherService.RetryPublishDomainEvent(@event, cancellationToken: cancellationToken);
-            }
+            await _dispatcherService.PublishDomainEvent(@event, cancellationToken);
         }
     }
 }
