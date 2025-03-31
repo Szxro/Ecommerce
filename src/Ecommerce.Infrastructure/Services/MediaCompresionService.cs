@@ -30,7 +30,7 @@ public class MediaCompresionService : IMediaCompressionService
     {
         string? path = _configuration.GetSection("MediaStorage").GetValue<string>("Path");
 
-        if (!IsPathValid(path))
+        if (!string.IsNullOrEmpty(path) && !IsPathValid(path))
         {
             throw new InvalidOperationException($"Invalid or missing media storage path. Current value: '{path ?? "null"}'");
         }
@@ -132,8 +132,8 @@ public class MediaCompresionService : IMediaCompressionService
             _ => throw new Exception("The quality provide is invalid.")
         };
 
-    private bool IsPathValid(string? path)
+    private bool IsPathValid(string path)
     {
-        return string.IsNullOrWhiteSpace(path) || Path.IsPathFullyQualified(path!);
+        return string.IsNullOrWhiteSpace(path) || Path.IsPathFullyQualified(path);
     }
 }
