@@ -19,10 +19,6 @@ public class UploadImageCommandHandler : ICommandHandler<UploadImageCommand>
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserImageRepository _userImageRepository;
 
-    private static readonly long MaxImageSize = 2 * 1024 * 1024; // 2MB in bytes (2 * 1,048,576 = 2,097,152);
-
-    private static readonly string[] AcceptedImageExtensions = [".jpeg", ".png", ".jpg"];
-
     public UploadImageCommandHandler(
         ICurrentUserService currentUserService,
         IMediaCompressionService mediaCompressionService,
@@ -39,11 +35,6 @@ public class UploadImageCommandHandler : ICommandHandler<UploadImageCommand>
 
     public async Task<Result> Handle(UploadImageCommand request, CancellationToken cancellationToken)
     {
-        if (!IsFileValid(request.file.Length, Path.GetExtension(request.file.FileName)))
-        {
-            return Result<CompressionResult>.Failure(Error.Validation("The file size or extension is not allowed."));
-        }
-
         string? username = _currentUserService.GetCurrentUserName();
 
         if (string.IsNullOrEmpty(username) || string.IsNullOrWhiteSpace(username))
@@ -106,9 +97,5 @@ public class UploadImageCommandHandler : ICommandHandler<UploadImageCommand>
 
             _userImageRepository.Update(foundUserImage);
         }
-    }
-    private bool IsFileValid(long fileLength, string extension)
-    {
-        return fileLength <= MaxImageSize && AcceptedImageExtensions.Contains(extension);
     }
 }
