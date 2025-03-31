@@ -2,6 +2,7 @@
 using Ecommerce.Infrastructure.Options.Database;
 using Ecommerce.Infrastructure.Persistence;
 using Ecommerce.Infrastructure.Persistence.Interceptors;
+using Ecommerce.Infrastructure.Services;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,19 +25,35 @@ public static class InfrastructureServiceRegistration
             .AddConfigurableOptions()
             .AddInterceptors();
 
+        services.AddHttpClient<RestCountryService>(options =>
+        {
+            // Note: Can create an option class to get the url dynamically (in the params have a service provider)
+            options.BaseAddress = new Uri("https://restcountries.com");
+            // Note: The http client for strongly type are registered as transient services.
+
+        }).ConfigurePrimaryHttpMessageHandler(() =>
+        {
+            return new SocketsHttpHandler
+            {
+                // Microsoft Recommendation: (how long a connection can be reusable?) 
+                PooledConnectionLifetime = TimeSpan.FromMinutes(5)
+                // Fix port exhaustion and reacting to dns changes
+            };
+        });
+
         services.AddDbContext<AppDbContext>((provider, options) =>
         {
             DatabaseOptions databaseOptions = provider.GetRequiredService<IOptions<DatabaseOptions>>().Value;
 
-            options.UseSqlServer(databaseOptions.ConnectionString,options =>
+            options.UseSqlServer(databaseOptions.ConnectionString, options =>
             {
-                options.CommandTimeout(databaseOptions.CommandTimeout);            
+                options.CommandTimeout(databaseOptions.CommandTimeout);
             })
             .AddInterceptors(
                 provider.GetRequiredService<AuditableEntityInterceptor>(),
                 provider.GetRequiredService<SoftDeleteInterceptor>()
-             )         
-            .UseSnakeCaseNamingConvention();
+             )
+            .UseSnakeCaseNamingConvention();           
 
             if (environment.IsDevelopment())
             {
