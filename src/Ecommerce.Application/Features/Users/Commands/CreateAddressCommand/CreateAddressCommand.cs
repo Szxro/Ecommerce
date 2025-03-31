@@ -57,6 +57,11 @@ public class CreateAddressCommandHandler : ICommandHandler<CreateAddressCommand>
         if (foundCountry is null)
         {
             return Result.Failure(Error.NotFound($"The given country with the country name of {request.countryName} was not found."));
+        }        
+
+        if (request.isDefault && await _userAddressRepository.isDefaultAddressSet(currentUserName, cancellationToken))
+        {
+            return Result.Failure(Error.Conflict("You already have a default address set."));
         }
 
         UserAddress newUserAddress = new UserAddress
