@@ -81,6 +81,9 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("upload-image")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> UploadImage(IFormFile formFile)
     {
         Result result = await _sender.Send(new UploadImageCommand(formFile));
@@ -91,6 +94,10 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("addresses")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> CreateUserAddress(CreateAddressCommand addressCommand)
     {
         Result result = await _sender.Send(addressCommand);
