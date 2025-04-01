@@ -21,12 +21,8 @@ public class RestCountryService : IRestCountryService
     public async Task<RestCountryResponse[]> GetCountriesInfoAsync(CancellationToken cancellationToken = default)
     {
         try
-        {
-            using HttpResponseMessage request = await _httpClient.GetAsync("/v3.1/all?fields=name");
-
-            request.EnsureSuccessStatusCode();
-
-            RestCountryResponse[]? response = await request.Content.ReadFromJsonAsync<RestCountryResponse[]>(cancellationToken);
+        {            
+            RestCountryResponse[]? response = await _httpClient.GetFromJsonAsync<RestCountryResponse[]>("/v3.1/all?fields=name", cancellationToken);
 
             if (response is null || response.Length <= 0)
             {
@@ -42,7 +38,7 @@ public class RestCountryService : IRestCountryService
                  ex.Message,
                  ex);
 
-            throw;
+            return Array.Empty<RestCountryResponse>();
         }
     }
 }
