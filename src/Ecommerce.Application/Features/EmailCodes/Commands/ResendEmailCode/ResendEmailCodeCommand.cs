@@ -70,7 +70,7 @@ public class ResendEmailCodeCommandHandler : ICommandHandler<ResendEmailCodeComm
 
         foundUser.AddEvent(
          new TemplateRenderEvent(
-             Category.EmailCode,
+             Category.VerificationEmail,
              new
              {
                  foundUser.FirstName,

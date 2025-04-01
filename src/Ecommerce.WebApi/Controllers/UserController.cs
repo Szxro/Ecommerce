@@ -4,6 +4,7 @@ using Ecommerce.Application.Features.EmailCodes.Commands.ResendEmailCode;
 using Ecommerce.Application.Features.EmailCodes.Commands.VerifyEmailCode;
 using Ecommerce.Application.Features.Users.Commands.UploadImageCommand;
 using Ecommerce.Application.Features.Users.Commands.CreateAddressCommand;
+using Ecommerce.Application.Features.Users.Commands.RequestPasswordResetCommand;
 using Ecommerce.Application.Common.DTOs.Response;
 using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.WebApi.Common;
@@ -11,6 +12,7 @@ using Ecommerce.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Ecommerce.Application.Features.Users.Commands.ResetPasswordCommand;
 
 namespace Ecommerce.WebApi.Controllers;
 
@@ -104,6 +106,32 @@ public class UserController : ControllerBase
 
         return result.Match(
             onSuccess: Results.Created,
+            onFailure: CustomResult.Problem);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("reset-password/{username}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IResult> ResetPasswordRequest([FromRoute] string username)
+    {
+        Result result = await _sender.Send(new RequestPasswordResetCommand(username));
+
+        return result.Match(
+            onSuccess: Results.NoContent,
+            onFailure: CustomResult.Problem);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("reset-password")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IResult> ResetPassword(ResetPasswordCommand resetPassword)
+    {
+        Result result = await _sender.Send(resetPassword);
+
+        return result.Match(
+            onSuccess: Results.NoContent,
             onFailure: CustomResult.Problem);
     }
 }

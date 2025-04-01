@@ -76,7 +76,7 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
 
         newUser.AddEvent(
             new TemplateRenderEvent(
-                Category.EmailCode,
+                Category.VerificationEmail,
                 new
                 { 
                     newUser.FirstName,
