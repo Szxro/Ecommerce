@@ -25,9 +25,10 @@ public static class ApplicationUtilities
     public static string GetTemplateCategoryDescription(TemplateCategory category)
         => category switch
         {
-            TemplateCategory.EmailCode => "email_code",
-            TemplateCategory.Lockout => "lockout",
+            TemplateCategory.VerificationEmail => "verification_email",
+            TemplateCategory.Lockout => "lockout_email",
             TemplateCategory.WelcomeMessage => "welcome_message",
+            TemplateCategory.ResetPasswordEmail => "reset_password_email",
             _ => throw new ArgumentOutOfRangeException()
         };
 }
