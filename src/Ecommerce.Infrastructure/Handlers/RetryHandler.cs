@@ -1,5 +1,4 @@
-﻿
-using Ecommerce.Domain.Contracts;
+﻿using Ecommerce.Domain.Contracts;
 
 namespace Ecommerce.Infrastructure.Handlers;
 
