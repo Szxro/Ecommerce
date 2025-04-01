@@ -2,7 +2,8 @@
 
 public enum TemplateCategory
 {
-    EmailCode = 0,
+    VerificationEmail = 0,
     Lockout = 1,
-    WelcomeMessage = 2
+    WelcomeMessage = 2,
+    ResetPasswordEmail = 3
 }
