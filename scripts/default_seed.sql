@@ -34,8 +34,10 @@ IF NOT EXISTS(SELECT 1 FROM template_category)
 BEGIN
 	INSERT INTO template_category([name],[description],created_at_utc,modified_at_utc,is_deleted,deleted_at_utc)
 	VALUES
-		('email_code','Represent the email code notification template category',GETUTCDATE(),GETUTCDATE(),0,CONVERT(datetime2,'1753-1-1')),
-		('welcome_message','Represent the email welcome notification template category',GETUTCDATE(),GETUTCDATE(),0,CONVERT(datetime2,'1753-1-1'));
+		('verification_email','Represent the verification email notification template category',GETUTCDATE(),GETUTCDATE(),0,CONVERT(datetime2,'1753-1-1')),
+		('welcome_message','Represent the email welcome notification template category',GETUTCDATE(),GETUTCDATE(),0,CONVERT(datetime2,'1753-1-1')),
+		('lockout_email','Represent the email lockout notification template category',GETUTCDATE(),GETUTCDATE(),0,CONVERT(datetime2,'1753-1-1')),
+		('reset_password_email','Represent the email lockout notification template category',GETUTCDATE(),GETUTCDATE(),0,CONVERT(datetime2,'1753-1-1'));
 
 	PRINT 'DEFAULT TEMPLATE CATEGORIES SAVED';
 END
@@ -43,7 +45,7 @@ END
 -- DEFAULT TEMPLATES
 IF NOT EXISTS(SELECT 1 FROM template)
 BEGIN
-	DECLARE @TEMPLATE_CATEGORY_ID INT = (SELECT TOP 1 id FROM template_category WHERE [name] = 'email_code')
+	DECLARE @TEMPLATE_CATEGORY_ID INT = (SELECT TOP 1 id FROM template_category WHERE [name] = 'verification_email')
 
 	INSERT INTO template([title],content,template_category_id,is_active,is_default,is_deleted,created_at_utc,modified_at_utc,deleted_at_utc)
 	VALUES
@@ -55,6 +57,18 @@ BEGIN
 	VALUES
 	    ('Welcome Message','<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Welcome Email</title><style>body{font-family:Arial,sans-serif;background-color:#f4f4f4;padding:20px}.container{max-width:600px;background:#fff;padding:20px;margin:auto;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,.1)}h1{color:#333}p{color:#555}.button{display:inline-block;background-color:#007bff;color:#fff;padding:10px 20px;text-decoration:none;border-radius:5px;margin-top:20px}</style></head><body><div class="container"><h1>Welcome, {{Username}}!</h1><p>We are excited to have you join us. Get ready for an amazing experience!</p><p>If you have any questions, feel free to reach out.</p><a href="#" class="button">Get Started</a></div></body></html>',@TEMPLATE_CATEGORY_ID,0,1,0,GETUTCDATE(),GETUTCDATE(),CONVERT(datetime2,'1753-1-1'));
 
+	SET @TEMPLATE_CATEGORY_ID = (SELECT TOP 1 id FROM template_category WHERE [name] = 'lockout_email')
+
+	INSERT INTO template([title],content,template_category_id,is_active,is_default,is_deleted,created_at_utc,modified_at_utc,deleted_at_utc)
+	VALUES
+		('Lockout notification','<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Account Locked</title><style>body{font-family:Arial,sans-serif;background-color:#f4f4f4;margin:0;padding:0;color:#333}.container{width:100%;max-width:600px;margin:0 auto;padding:20px;background-color:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1)}.header{text-align:center;margin-bottom:20px}.header h1{color:#d32f2f}.content{font-size:16px;line-height:1.5;margin-bottom:20px}.content p{margin:10px 0}.button{background-color:#1976d2;color:#fff;text-decoration:none;padding:12px 24px;border-radius:5px;display:inline-block;font-weight:700}.footer{font-size:12px;color:#777;text-align:center;margin-top:30px}</style></head><body><div class="container"><div class="header"><h1>Account Locked</h1></div><div class="content"><p>Hello, {{Username}}!</p><p>We noticed multiple failed login attempts on your account, which has caused your account to be temporarily locked for your security.</p><p>If you did not attempt to log in, please make sure your account information is secure.</p><p>If you did not attempt to log in, please contact our support team immediately.</p></div><div class="footer"><p>If you have any questions, please contact our support team.</p><p>&copy; 2025 Ecommerce. All rights reserved.</p></div></div></body></html>',@TEMPLATE_CATEGORY_ID,0,1,0,GETUTCDATE(),GETUTCDATE(),CONVERT(datetime2,'1753-1-1'));
+
+	SET @TEMPLATE_CATEGORY_ID = (SELECT TOP 1 id FROM template_category WHERE [name] = 'reset_password_email')
+
+	INSERT INTO template([title],content,template_category_id,is_active,is_default,is_deleted,created_at_utc,modified_at_utc,deleted_at_utc)
+	VALUES
+		('Password Reset Request','<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Password Reset Request</title><style>body{font-family:Arial,sans-serif;background-color:#f4f4f4;margin:0;padding:0;color:#333}.container{width:100%;max-width:600px;margin:0 auto;padding:20px;background-color:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1)}.header{text-align:center;margin-bottom:20px}.header h1{color:#4caf50}.content{font-size:16px;line-height:1.5;margin-bottom:20px}.content p{margin:10px 0}.code-box{font-size:20px;font-weight:700;padding:10px;background-color:#f1f1f1;border-radius:5px;margin:20px 0;text-align:center}.footer{font-size:12px;color:#777;text-align:center;margin-top:30px}</style></head><body><div class="container"><div class="header"><h1>Password Reset Request</h1></div><div class="content"><p>Hello, {{Username}}!</p><p>We received a request to reset your password. To reset your password, please use the following code:</p><div class="code-box">{{ResetCode}}</div><p>Enter this code on the password reset page to proceed with changing your password.</p><p>If you did not request a password reset, you can safely ignore this email.</p><p>The code will expire in 30 minutes for security reasons.</p></div><div class="footer"><p>If you have any questions, please contact our support team.</p><p>&copy; Ecommerce. All rights reserved.</p></div></div></body></html>',@TEMPLATE_CATEGORY_ID,0,1,0,GETUTCDATE(),GETUTCDATE(),CONVERT(datetime2,'1753-1-1'));
+
 	PRINT 'DEFAULT TEMPLATES SAVED'
 END
 
@@ -62,7 +76,7 @@ END
 IF NOT EXISTS(SELECT 1 FROM template_variable)
 BEGIN
 	-- EMAIL CODE TEMPLATE
-	DECLARE @TEMPLATE_ID INT = (SELECT TOP 1 A.id FROM template A INNER JOIN template_category B ON A.template_category_id = B.id WHERE B.[name] = 'email_code');
+	DECLARE @TEMPLATE_ID INT = (SELECT TOP 1 A.id FROM template A INNER JOIN template_category B ON A.template_category_id = B.id WHERE B.[name] = 'verification_email');
 
 	INSERT INTO template_variable(template_id, variable_id, created_at_utc, modified_at_utc)
 	SELECT @TEMPLATE_ID, Id, GETUTCDATE(), GETUTCDATE()
@@ -75,7 +89,7 @@ BEGIN
 	INSERT INTO template_variable(template_id, variable_id, created_at_utc, modified_at_utc)
 	SELECT @TEMPLATE_ID, Id, GETUTCDATE(), GETUTCDATE()
 	FROM variable
-	WHERE [name] IN ('Username')
+	WHERE [name] IN ('Username')	
 
 	PRINT 'DEFAULT TEMPLATE VARIABLES SAVED'
 END
