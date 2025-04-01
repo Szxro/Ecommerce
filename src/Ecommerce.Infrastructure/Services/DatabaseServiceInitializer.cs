@@ -65,22 +65,24 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
 
     public async Task SeedAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Trying to seed data....");
         try
         {
+            _logger.LogInformation("Trying to seed data....");
 
             if (!await _appDbContext.Set<Country>().AnyAsync(cancellationToken))
             {
-                RestCountryResponse[]? response = await _exponentialBackoffService.RetryWithBackoff(
-                    () => _restCountryService.GetCountriesInfoAsync(cancellationToken),
-                    cancellationToken: cancellationToken);
+                RestCountryResponse[] response = await _restCountryService.GetCountriesInfoAsync(cancellationToken);
 
-                List<Country> countries = response!.Select(x => new Country { Name = x.Name.Common }).ToList();
+                if (response.Length <= 0) return;
+
+                List<Country> countries = response.Select(x => new Country { Name = x.Name.Common }).ToList();
 
                 _appDbContext.Set<Country>().AddRange(countries);
 
                 await _appDbContext.SaveChangesAsync(cancellationToken);
             }
+
+            _logger.LogInformation("Seed Successfully!!!");
 
         } catch (Exception ex)
         {
@@ -90,6 +92,5 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
 
             throw;
         }
-        _logger.LogInformation("Seed Successfully!!!");
     }
 }
