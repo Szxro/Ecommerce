@@ -6,13 +6,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Infrastructure.Services;
 
-// TODO: Refactor the logic (one method for both cases) and test it.
-
 [Inject(ServiceLifetime.Singleton)]
 public class ExponentialBackoffService : IExponentialBackoffService
 {
-    private readonly Random _random = new Random();
     private readonly ILogger<ExponentialBackoffService> _logger;
+
+    private readonly Random _random = new Random();
 
     public ExponentialBackoffService(ILogger<ExponentialBackoffService> logger)
     {
@@ -40,9 +39,7 @@ public class ExponentialBackoffService : IExponentialBackoffService
 
             } catch
             {
-                double waitTime = Math.Min(initialDelay * Math.Pow(timeMultiple, attempts), maxDelay);
-
-                int delay = (int)Math.Floor(_random.NextDouble() * waitTime);
+                int delay = CalculateDelay(options ?? new BackOffOptions(maxRetries, initialDelay, maxDelay, timeMultiple), attempts);
 
                 await Task.Delay(delay, cancellationToken);
 
@@ -56,7 +53,7 @@ public class ExponentialBackoffService : IExponentialBackoffService
             }
         }
 
-        _logger.LogError("Max attempts reached operation failed!!!!.");
+        _logger.LogError("Max retries reached. Operation ultimately failed.");
 
         return default(T);
     }
@@ -79,13 +76,10 @@ public class ExponentialBackoffService : IExponentialBackoffService
                     maxRetries);
 
                 return;
-
             }
             catch
             {
-                double waitTime = Math.Min(initialDelay * Math.Pow(timeMultiple, attempts), maxDelay);
-
-                int delay = (int)Math.Floor(_random.NextDouble() * waitTime);
+                int delay = CalculateDelay(options ?? new BackOffOptions(maxRetries, initialDelay, maxDelay, timeMultiple), attempts);
 
                 await Task.Delay(delay, cancellationToken);
 
@@ -99,6 +93,15 @@ public class ExponentialBackoffService : IExponentialBackoffService
             }
         }
 
-        _logger.LogError("Max attempts reached operation failed!!!!.");
+        _logger.LogError("Max retries reached. Operation ultimately failed.");
+    }
+
+    private int CalculateDelay(BackOffOptions options, int attempts)
+    {
+        (int maxRetries, int initialDelay, int maxDelay, int timeMultiple) = options;
+
+        double waitTime = Math.Min(initialDelay * Math.Pow(timeMultiple, attempts), maxDelay);
+
+        return (int)Math.Floor(_random.NextDouble() * waitTime);
     }
 }
