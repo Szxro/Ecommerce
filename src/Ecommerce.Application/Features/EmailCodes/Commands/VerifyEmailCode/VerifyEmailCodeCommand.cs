@@ -5,6 +5,7 @@ using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
 using Ecommerce.Domain.Events;
 using Category = Ecommerce.SharedKernel.Enums.TemplateCategory;
+using Ecommerce.Application.Utilities;
 
 namespace Ecommerce.Application.Features.EmailCodes.Commands.VerifyEmailCode;
 
@@ -37,7 +38,7 @@ public class VerifyEmailCodeCommandHandler : ICommandHandler<VerifyEmailCodeComm
             return Result.Failure(EmailCodeErrors.EmailCodeNotFound(request.emailCode));
         }
 
-        Result result = ValidateEmailCode(foundCode);
+        Result result = ApplicationUtilities.ValidateEmailCode(foundCode);
 
         if (result.IsFailure) return result;
 
@@ -58,13 +59,4 @@ public class VerifyEmailCodeCommandHandler : ICommandHandler<VerifyEmailCodeComm
 
         return Result.Success();
     }
-
-    private static Result ValidateEmailCode(EmailCode emailCode)
-       => emailCode switch
-       {
-           { IsUsed   : true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyUsed(emailCode.Code)),
-           { IsRevoked: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyRevoked(emailCode.Code)),
-           { IsExpired: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyExpired(emailCode.Code)),
-           _ => Result.Success(),
-       };
 }

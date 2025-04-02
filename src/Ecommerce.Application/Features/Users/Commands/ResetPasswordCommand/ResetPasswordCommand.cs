@@ -3,6 +3,7 @@ using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.SharedKernel.Contracts;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
+using Ecommerce.Application.Utilities;
 
 namespace Ecommerce.Application.Features.Users.Commands.ResetPasswordCommand;
 
@@ -35,7 +36,7 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
             return Result.Failure(EmailCodeErrors.EmailCodeNotFound(request.resetCode));
         }
 
-        Result result = ValidateEmailCode(foundCode);
+        Result result = ApplicationUtilities.ValidateEmailCode(foundCode);
 
         if (result.IsFailure) return result;
 
@@ -72,13 +73,4 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
 
         return Result.Success();
     }
-
-    private static Result ValidateEmailCode(EmailCode emailCode)
-       => emailCode switch
-       {
-           { IsUsed: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyUsed(emailCode.Code)),
-           { IsRevoked: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyRevoked(emailCode.Code)),
-           { IsExpired: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyExpired(emailCode.Code)),
-           _ => Result.Success(),
-       };
 }
