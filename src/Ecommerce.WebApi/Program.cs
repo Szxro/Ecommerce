@@ -24,7 +24,14 @@ WebApplication app = builder.Build();
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(options =>
+        {
+            if (app.Environment.IsDevelopment())
+            {
+                // Persist the token even if the page is reloaded or the project itself
+                options.EnablePersistAuthorization();
+            }            
+        });
     }
 
     app.UseSerilogRequestLogging();
