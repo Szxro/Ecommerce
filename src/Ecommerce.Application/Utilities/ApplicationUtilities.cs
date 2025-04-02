@@ -2,7 +2,6 @@
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
 using Ecommerce.SharedKernel.Common.Primitives;
-using Ecommerce.SharedKernel.Enums;
 using TemplateCategory = Ecommerce.SharedKernel.Enums.TemplateCategory;
 using Fluid;
 
