@@ -1,5 +1,9 @@
 ﻿using Ecommerce.Application.Common.Exceptions;
+using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Errors;
+using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.SharedKernel.Enums;
+using TemplateCategory = Ecommerce.SharedKernel.Enums.TemplateCategory;
 using Fluid;
 
 namespace Ecommerce.Application.Utilities;
@@ -31,4 +35,13 @@ public static class ApplicationUtilities
             TemplateCategory.ResetPasswordEmail => "reset_password_email",
             _ => throw new ArgumentOutOfRangeException()
         };
+
+    public static Result ValidateEmailCode(EmailCode emailCode)
+       => emailCode switch
+       {
+           { IsUsed: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyUsed(emailCode.Code)),
+           { IsRevoked: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyRevoked(emailCode.Code)),
+           { IsExpired: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyExpired(emailCode.Code)),
+           _ => Result.Success(),
+       };
 }
