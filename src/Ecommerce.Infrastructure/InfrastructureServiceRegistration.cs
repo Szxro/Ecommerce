@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Infrastructure.Extensions;
+using Ecommerce.Infrastructure.Handlers;
 using Ecommerce.Infrastructure.Options.Database;
 using Ecommerce.Infrastructure.Persistence;
 using Ecommerce.Infrastructure.Persistence.Interceptors;
@@ -23,7 +24,8 @@ public static class InfrastructureServiceRegistration
             .AddWorkers()
             .AddStrategies()
             .AddConfigurableOptions()
-            .AddInterceptors();
+            .AddInterceptors()
+            .AddHttpHandlers();
 
         services.AddHttpClient<RestCountryService>(options =>
         {
@@ -39,7 +41,9 @@ public static class InfrastructureServiceRegistration
                 PooledConnectionLifetime = TimeSpan.FromMinutes(5)
                 // Fix port exhaustion and reacting to dns changes
             };
-        });
+        })
+        .AddHttpMessageHandler<LoggingHandler>() // Need to be register in order of execution (act like middlewares)
+        .AddHttpMessageHandler<RetryHandler>();
 
         services.AddDbContext<AppDbContext>((provider, options) =>
         {

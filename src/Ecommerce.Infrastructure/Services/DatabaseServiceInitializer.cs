@@ -15,15 +15,18 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
     private readonly AppDbContext _appDbContext;
     private readonly ILogger<DatabaseServiceInitializer> _logger;
     private readonly RestCountryService _restCountryService;
+    private readonly IExponentialBackoffService _exponentialBackoffService;
 
     public DatabaseServiceInitializer(
         AppDbContext appDbContext,
         ILogger<DatabaseServiceInitializer> logger,
-        RestCountryService restCountryService)
+        RestCountryService restCountryService,
+        IExponentialBackoffService exponentialBackoffService)
     {
         _appDbContext = appDbContext;
         _logger = logger;
         _restCountryService = restCountryService;
+        _exponentialBackoffService = exponentialBackoffService;
     }
 
     public async Task CanConnectAsync(CancellationToken cancellationToken = default)
@@ -62,13 +65,15 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
 
     public async Task SeedAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Trying to seed data....");
         try
         {
+            _logger.LogInformation("Trying to seed data....");
 
             if (!await _appDbContext.Set<Country>().AnyAsync(cancellationToken))
             {
                 RestCountryResponse[] response = await _restCountryService.GetCountriesInfoAsync(cancellationToken);
+
+                if (response.Length <= 0) return;
 
                 List<Country> countries = response.Select(x => new Country { Name = x.Name.Common }).ToList();
 
@@ -76,6 +81,8 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
 
                 await _appDbContext.SaveChangesAsync(cancellationToken);
             }
+
+            _logger.LogInformation("Seed Successfully!!!");
 
         } catch (Exception ex)
         {
@@ -85,6 +92,5 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
 
             throw;
         }
-        _logger.LogInformation("Seed Successfully!!!");
     }
 }
