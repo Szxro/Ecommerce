@@ -57,5 +57,5 @@ public class AppDbContext : DbContext
 
     public DbSet<Product> Product => Set<Product>();
 
-    public DbSet<ProductCategory> productCategory => Set<ProductCategory>();
+    public DbSet<ProductCategory> ProductCategory => Set<ProductCategory>();
 }
