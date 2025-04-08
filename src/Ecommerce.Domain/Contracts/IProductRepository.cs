@@ -2,7 +2,8 @@
 
 namespace Ecommerce.Domain.Contracts;
 
-public interface IProductRepository : IRepositoryWriter<Product>
+public interface IProductRepository 
+    : IRepositoryWriter<Product>, IRepositoryRemover<Product>
 {
     Task<bool> IsProductNameNotUnique(string productName, CancellationToken cancellationToken = default);
 
