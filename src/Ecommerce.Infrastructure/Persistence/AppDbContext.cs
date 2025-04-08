@@ -54,4 +54,8 @@ public class AppDbContext : DbContext
     public DbSet<Address> Address => Set<Address>();
 
     public DbSet<UserAddress> UserAddress => Set<UserAddress>();
+
+    public DbSet<Product> Product => Set<Product>();
+
+    public DbSet<ProductCategory> productCategory => Set<ProductCategory>();
 }
