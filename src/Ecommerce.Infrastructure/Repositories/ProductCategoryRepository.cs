@@ -19,4 +19,11 @@ public class ProductCategoryRepository
         return await _appDbContext.ProductCategory
                                   .Where(x => x.Name.ToLower() == categoryName.ToLower()).FirstOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<bool> IsProductCategoryNameNotUnique(string categoryName, CancellationToken cancellationToken = default)
+    {
+        return await _appDbContext.ProductCategory
+                                  .AsNoTracking()
+                                  .Where(x => x.Name.ToLower() == categoryName.ToLower()).AnyAsync(cancellationToken);
+    }
 }
