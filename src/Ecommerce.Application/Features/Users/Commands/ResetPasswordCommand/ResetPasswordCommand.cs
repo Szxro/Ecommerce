@@ -4,6 +4,7 @@ using Ecommerce.SharedKernel.Contracts;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
 using Ecommerce.Application.Utilities;
+using Ecommerce.Application.Common.DTOs.Response;
 
 namespace Ecommerce.Application.Features.Users.Commands.ResetPasswordCommand;
 
@@ -43,6 +44,11 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
         foundCode.IsUsed = true;
 
         _emailCodeRepository.Update(foundCode);
+
+        if (foundCode.User.LockOutEnabled && foundCode.User.LockOutEndAtUtc > DateTime.UtcNow)
+        {
+            return Result.Failure(UserErrors.UserLockOut(foundCode.User.Username.Value, foundCode.User.LockOutEndAtUtc));
+        }
 
         Credentials? foundCredentials = await _credentialsRepository.GetCredentialsByUsernameAsync(foundCode.User.Username.Value, cancellationToken);
 
