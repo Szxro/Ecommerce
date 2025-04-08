@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ecommerce.WebApi.Extensions;
 using Ecommerce.WebApi.Common;
 using Ecommerce.Application.Features.Products.Commands.UpdateProductCommand;
+using Ecommerce.Application.Features.Products.Commands.DeleteProductCommand;
 
 namespace Ecommerce.WebApi.Controllers;
 
@@ -38,6 +39,16 @@ public class ProductController : ControllerBase
     public async Task<IResult> UpdateProduct(UpdateProductCommand updateProduct)
     {
         Result result = await _sender.Send(updateProduct);
+
+        return result.Match(
+            onSuccess: Results.NoContent,
+            onFailure: CustomResult.Problem);
+    }
+
+    [HttpDelete("{productName}")]
+    public async Task<IResult> DeleteProduct(string productName)
+    {
+        Result result = await _sender.Send(new DeleteProductCommand(productName));
 
         return result.Match(
             onSuccess: Results.NoContent,
