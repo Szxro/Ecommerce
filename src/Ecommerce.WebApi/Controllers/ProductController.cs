@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ecommerce.WebApi.Extensions;
 using Ecommerce.WebApi.Common;
+using Ecommerce.Application.Features.Products.Commands.UpdateProductCommand;
 
 namespace Ecommerce.WebApi.Controllers;
 
@@ -31,5 +32,15 @@ public class ProductController : ControllerBase
         return result.Match(
             onSuccess: () => CustomResult.Success(result),
             onFailure: CustomResult.Problem);
-    }    
+    }
+
+    [HttpPut]
+    public async Task<IResult> UpdateProduct(UpdateProductCommand updateProduct)
+    {
+        Result result = await _sender.Send(updateProduct);
+
+        return result.Match(
+            onSuccess: Results.NoContent,
+            onFailure: CustomResult.Problem);
+    }
 }
