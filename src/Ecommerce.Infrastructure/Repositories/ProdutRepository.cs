@@ -13,6 +13,13 @@ public class ProdutRepository : GenericRepository<Product>, IProductRepository
 {
     public ProdutRepository(AppDbContext appDbContext) : base(appDbContext) { }
 
+    public async Task<Product?> GetProductByNameAsync(string productName, CancellationToken cancellationToken = default)
+    {
+        return await _appDbContext.Product
+                                  .Where(x => x.Name.ToLower() == productName.ToLower())
+                                  .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<bool> IsProductNameNotUnique(string productName, CancellationToken cancellationToken = default)
     {
         return await _appDbContext.Product
