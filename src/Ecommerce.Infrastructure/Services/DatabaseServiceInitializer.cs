@@ -82,6 +82,31 @@ public sealed class DatabaseServiceInitializer : IDatabaseServiceInitializer
                 await _appDbContext.SaveChangesAsync(cancellationToken);
             }
 
+            if (!await _appDbContext.Set<ProductCategory>().AnyAsync())
+            {
+                ProductCategory[] categories =                  
+                [
+                    new ProductCategory { Name = "Electronics" },
+                    new ProductCategory { Name = "Clothing and Accessories" },
+                    new ProductCategory { Name = "Food" },
+                    new ProductCategory { Name = "Home and Garden" },
+                    new ProductCategory { Name = "Beauty and Personal Care" },
+                    new ProductCategory { Name = "Toys and Games" },
+                    new ProductCategory { Name = "Sports and Outdoors" },
+                    new ProductCategory { Name = "Health and Wellness" },
+                    new ProductCategory { Name = "Automotive" },
+                    new ProductCategory { Name = "Office Supplies" },
+                    new ProductCategory { Name = "Books and Music" },
+                    new ProductCategory { Name = "Furniture" },
+                    new ProductCategory { Name = "Tools and Home Improvement" },
+                    new ProductCategory { Name = "Arts and Crafts" }
+                ];
+
+                _appDbContext.ProductCategory.AddRange(categories);
+
+                await _appDbContext.SaveChangesAsync(cancellationToken);
+            }
+
             _logger.LogInformation("Seed Successfully!!!");
 
         } catch (Exception ex)
