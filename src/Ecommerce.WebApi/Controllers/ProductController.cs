@@ -12,6 +12,7 @@ using Ecommerce.Application.Common.DTOs.Response.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Ecommerce.Application.Features.Products.Commands.UploadProductImageCommand;
 
 namespace Ecommerce.WebApi.Controllers;
 
@@ -70,5 +71,15 @@ public class ProductController : ControllerBase
         Result<OffSetPagination<ProductResponse>> result = await _sender.Send(new GetProductsQuery(page, pageSize, searchTerm, sortColumn, sortOrder));
 
         return CustomResult.Success(result);
+    }
+
+    [HttpPost("{productName}")]
+    public async Task<IResult> UploadProductImage(string productName,IFormFile formFile)
+    {
+        Result result = await _sender.Send(new UploadProductImageCommand(productName,formFile));
+
+        return result.Match(
+            onSuccess: Results.Created,
+            onFailure: CustomResult.Problem);
     }
 }
