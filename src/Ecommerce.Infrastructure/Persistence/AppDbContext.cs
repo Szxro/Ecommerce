@@ -1,11 +1,13 @@
-﻿using Ecommerce.Domain.Entities;
+﻿using Ecommerce.Application.Common.Data;
+using Ecommerce.Domain.Entities;
 using Ecommerce.Infrastructure.Extensions;
 using Ecommerce.SharedKernel.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Infrastructure.Persistence;
 
-public class AppDbContext : DbContext
+public class AppDbContext 
+    : DbContext, IApplicationDbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

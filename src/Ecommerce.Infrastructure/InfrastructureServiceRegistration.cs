@@ -1,4 +1,5 @@
-﻿using Ecommerce.Infrastructure.Extensions;
+﻿using Ecommerce.Application.Common.Data;
+using Ecommerce.Infrastructure.Extensions;
 using Ecommerce.Infrastructure.Handlers;
 using Ecommerce.Infrastructure.Options.Database;
 using Ecommerce.Infrastructure.Persistence;
@@ -66,6 +67,8 @@ public static class InfrastructureServiceRegistration
             }
         });
 
+        services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+                
         services.RegisterServicesFromAssembly(typeof(InfrastructureServiceRegistration).Assembly);
 
         services.AddHttpContextAccessor();
