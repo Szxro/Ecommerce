@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
 
@@ -11,8 +12,8 @@ public class IsAdminFilterAttribute : ActionFilterAttribute
     private static readonly string JwtClaimIsAdministrator = "is_admin";
 
     public override void OnActionExecuting(ActionExecutingContext context)
-    {
-        if (!isUserAdmin(context.HttpContext))
+    {        
+        if (!isUserAdmin(context.HttpContext) && !HasAllowAnonymousAttribute(context))
         {
             // 403 Forbidden
             context.Result = new ForbidResult();
@@ -20,14 +21,14 @@ public class IsAdminFilterAttribute : ActionFilterAttribute
             context.HttpContext.Response.Headers.Append(HeaderNames.WWWAuthenticate,"is_not_admin");
 
             return;
-        }
-        
+        }        
+
         base.OnActionExecuting(context);
     }
 
     private bool isUserAdmin(HttpContext context)
-    {
-        return context
-            .User.Claims.Any(claim => claim.Type == JwtClaimIsAdministrator && claim.Value == "true");
-    }
+        => context.User.Claims.Any(claim => claim.Type == JwtClaimIsAdministrator && claim.Value == "true");
+
+    private bool HasAllowAnonymousAttribute(ActionExecutingContext context)
+        => context.ActionDescriptor.EndpointMetadata.Any(endpoint => endpoint is AllowAnonymousAttribute);       
 }
