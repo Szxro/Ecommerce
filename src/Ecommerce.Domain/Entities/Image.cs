@@ -7,6 +7,7 @@ public class Image : Entity
     public Image()
     {
         UserImages = new HashSet<UserImage>();
+        ProductImages = new HashSet<ProductImage>();
     }
 
     public string FileName { get; set; } = string.Empty;
@@ -22,4 +23,6 @@ public class Image : Entity
     public int Width { get; set; }
 
     public ICollection<UserImage> UserImages { get; set; }
+
+    public ICollection<ProductImage> ProductImages { get; set; }
 }
