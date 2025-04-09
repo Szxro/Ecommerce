@@ -11,6 +11,10 @@ public static class ApplicationUtilities
 {
     private static readonly FluidParser _parser = new FluidParser();
 
+    private static readonly long MaxImageSize = 2 * 1024 * 1024; // 2MB in bytes (2 * 1,048,576 = 2,097,152);
+
+    private static readonly string[] AcceptedImageExtensions = [".jpeg", ".png", ".jpg"];
+
     public static string TemplateRender(string template,object model)
     {
         if (_parser.TryParse(template, out IFluidTemplate fluidTemplate, out string error))
@@ -43,4 +47,9 @@ public static class ApplicationUtilities
            { IsExpired: true } => Result.Failure(EmailCodeErrors.EmailCodeAlreadyExpired(emailCode.Code)),
            _ => Result.Success(),
        };
+
+    public static bool IsFileValid(long fileLength, string extension)
+    {
+        return fileLength <= MaxImageSize && AcceptedImageExtensions.Contains(extension);
+    }
 }
