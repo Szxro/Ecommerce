@@ -60,4 +60,6 @@ public class AppDbContext
     public DbSet<Product> Product => Set<Product>();
 
     public DbSet<ProductCategory> ProductCategory => Set<ProductCategory>();
+
+    public DbSet<ProductImage> ProductImage => Set<ProductImage>();
 }
