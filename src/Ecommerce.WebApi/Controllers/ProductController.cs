@@ -2,13 +2,16 @@
 using Ecommerce.WebApi.Filters;
 using Ecommerce.SharedKernel.Common.Primitives;
 using Ecommerce.Application.Common.DTOs.Entities;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Ecommerce.WebApi.Extensions;
 using Ecommerce.WebApi.Common;
 using Ecommerce.Application.Features.Products.Commands.UpdateProductCommand;
 using Ecommerce.Application.Features.Products.Commands.DeleteProductCommand;
+using Ecommerce.Application.Features.Products.Queries.GetProductQuery;
+using Ecommerce.Application.Common.Data;
+using Ecommerce.Application.Common.DTOs.Response.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.WebApi.Controllers;
 
@@ -53,5 +56,19 @@ public class ProductController : ControllerBase
         return result.Match(
             onSuccess: Results.NoContent,
             onFailure: CustomResult.Problem);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IResult> GetProducts(
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int page,
+        int pageSize)
+    {
+        Result<OffSetPagination<ProductResponse>> result = await _sender.Send(new GetProductsQuery(page, pageSize, searchTerm, sortColumn, sortOrder));
+
+        return CustomResult.Success(result);
     }
 }
