@@ -7,7 +7,7 @@ using Ecommerce.SharedKernel.Contracts;
 
 namespace Ecommerce.Application.Features.Products.Commands.CreateProductCommand;
 
-public record CreateProductCommand(string name, string description, string productCategory) : ICommand<ProductDTO>;
+public record CreateProductCommand(string name, string description, int price ,string productCategory) : ICommand<ProductDTO>;
 
 
 public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, ProductDTO>
@@ -43,6 +43,7 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
         {
             Name = request.name,
             Description = request.description,
+            Price = request.price,
             ProductCategory = foundCategory
         };
 
