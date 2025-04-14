@@ -12,5 +12,5 @@ public interface ICachedQuery
 {
     string CachedKey { get; }
 
-    MemoryCacheEntryOptions? Options { get; }
+    MemoryCacheEntryOptions? Options => null;
 }
