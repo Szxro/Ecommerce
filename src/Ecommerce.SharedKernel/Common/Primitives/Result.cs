@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Ecommerce.SharedKernel.Common.Primitives;
 
@@ -10,12 +11,13 @@ public class Result
 
     public Error Error { get; }
 
+    [JsonConstructor]
     protected Result(
         bool isSuccess,
         Error error)
-    {
-        if (isSuccess && error != Error.None ||
-            !isSuccess && error == Error.None)
+    {        
+        if (isSuccess && error != Error.None
+            || !isSuccess && error == Error.None)
         {
             throw new ArgumentException("Invalid Error {error}", nameof(error));
         }
