@@ -2,7 +2,8 @@
 
 namespace Ecommerce.Domain.Contracts;
 
-public interface IProductCategoryRepository : IRepositoryWriter<ProductCategory>
+public interface IProductCategoryRepository 
+    : IRepositoryWriter<ProductCategory>, IRepositoryRemover<ProductCategory>
 {
     Task<ProductCategory?> GetProductCategoryByNameAsync(string categoryName,CancellationToken cancellationToken = default);
 
