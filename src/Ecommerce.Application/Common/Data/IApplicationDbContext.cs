@@ -8,4 +8,6 @@ public interface IApplicationDbContext
     public DbSet<Product> Product { get; }
 
     public DbSet<ProductImage> ProductImage { get; }
+
+    public DbSet<ProductCategory> ProductCategory { get; }
 }
