@@ -12,13 +12,16 @@ public class CreateProductCategoryCommandHandler : ICommandHandler<CreateProduct
 {
     private readonly IProductCategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICacheService _cacheService;
 
     public CreateProductCategoryCommandHandler(
         IProductCategoryRepository categoryRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ICacheService cacheService)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
+        _cacheService = cacheService;
     }
     public async Task<Result> Handle(CreateProductCategoryCommand request, CancellationToken cancellationToken)
     {
@@ -37,6 +40,8 @@ public class CreateProductCategoryCommandHandler : ICommandHandler<CreateProduct
         _categoryRepository.Add(newCategory);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _cacheService.Remove("get-all-products-categories");
 
         return Result.Success();
     }
