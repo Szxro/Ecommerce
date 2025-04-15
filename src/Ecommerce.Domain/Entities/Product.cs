@@ -7,6 +7,7 @@ public class Product : Entity
     public Product()
     {
         ProductImages = new HashSet<ProductImage>();
+        ShoppingCartProducts = new HashSet<ShoppingCartProduct>();
     }
     public string Name { get; set; } = string.Empty;
 
@@ -19,4 +20,6 @@ public class Product : Entity
     public ProductCategory ProductCategory { get; set; } = null!;
 
     public ICollection<ProductImage> ProductImages { get; set; }
+
+    public ICollection<ShoppingCartProduct> ShoppingCartProducts { get; set; }
 }

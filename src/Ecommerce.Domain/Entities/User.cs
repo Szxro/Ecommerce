@@ -13,6 +13,7 @@ public sealed class User : Entity
         Templates = new HashSet<UserTemplate>();
         UserImages = new HashSet<UserImage>();
         UserAddresses = new HashSet<UserAddress>();
+        ShoppingCarts = new HashSet<ShoppingCart>();
     }
 
     public string FirstName { get; set; } = string.Empty;
@@ -44,4 +45,6 @@ public sealed class User : Entity
     public ICollection<UserImage> UserImages { get; set; }
 
     public ICollection<UserAddress> UserAddresses { get; set; }
+
+    public ICollection<ShoppingCart> ShoppingCarts { get; set; }
 }
