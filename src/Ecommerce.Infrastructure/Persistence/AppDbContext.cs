@@ -62,4 +62,8 @@ public class AppDbContext
     public DbSet<ProductCategory> ProductCategory => Set<ProductCategory>();
 
     public DbSet<ProductImage> ProductImage => Set<ProductImage>();
+
+    public DbSet<ShoppingCart> ShoppingCart => Set<ShoppingCart>();
+
+    public DbSet<ShoppingCartProduct> ShoppingCartProduct => Set<ShoppingCartProduct>();
 }

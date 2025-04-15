@@ -4,6 +4,7 @@ using Ecommerce.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250415151214_Shopping_Cart_Products")]
+    partial class Shopping_Cart_Products
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -372,11 +375,15 @@ namespace Ecommerce.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("name");
 
                     b.HasKey("Id")
                         .HasName("pk_product_category");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_product_category_name");
 
                     b.ToTable("product_category", (string)null);
                 });
@@ -558,9 +565,8 @@ namespace Ecommerce.Infrastructure.Persistence.Migrations
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_shopping_cart_product_product_id");
 
-                    b.HasIndex("ShoppingCartId", "ProductId")
-                        .IsUnique()
-                        .HasDatabaseName("UX_ShoppingCartProduct_ShoppingCartId_ProductId");
+                    b.HasIndex("ShoppingCartId")
+                        .HasDatabaseName("ix_shopping_cart_product_shopping_cart_id");
 
                     b.ToTable("shopping_cart_product", (string)null);
                 });
