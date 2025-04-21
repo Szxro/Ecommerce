@@ -4,31 +4,38 @@ using Ecommerce.SharedKernel.Contracts;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Errors;
 
-namespace Ecommerce.Application.Features.ShoppingCarts.AddShoppingCartCommand;
+namespace Ecommerce.Application.Features.ShoppingCarts.Commands.AddShoppingCartCommand;
 
-public record AddShoppingCartCommand(string username, string productName, int quantity) : ICommand;
+public record AddCartProductCommand(string productName, int quantity) : ICommand;
 
-public class AddShoppingCartCommandHandler : ICommandHandler<AddShoppingCartCommand>
+public class AddCartProductCommandHandler : ICommandHandler<AddCartProductCommand>
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
     private readonly IShoppingCartRepository _shoppingCartRepository;
+    private readonly ICurrentUserService _currentUserService;
 
-    public AddShoppingCartCommandHandler(
+    public AddCartProductCommandHandler(
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,
-        IShoppingCartRepository shoppingCartRepository)
+        IShoppingCartRepository shoppingCartRepository,
+        ICurrentUserService currentUserService)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
         _shoppingCartRepository = shoppingCartRepository;
+        _currentUserService = currentUserService;
     }
-    public async Task<Result> Handle(AddShoppingCartCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(AddCartProductCommand request, CancellationToken cancellationToken)
     {
-        User? currentUser = await _userRepository.GetUserByUsernameAsync(request.username, cancellationToken);
+        string? currentUsername = _currentUserService.GetCurrentUserName();
+
+        if (string.IsNullOrEmpty(currentUsername) && string.IsNullOrWhiteSpace(currentUsername)) return Result.Failure(UserErrors.UsernameNotUniqueOrInvalid);
+
+        User? currentUser = await _userRepository.GetUserByUsernameAsync(currentUsername, cancellationToken);
 
         if (currentUser is null) return Result.Failure(UserErrors.UserNotFoundByUsername);
 
@@ -36,16 +43,17 @@ public class AddShoppingCartCommandHandler : ICommandHandler<AddShoppingCartComm
 
         if (foundProduct is null) return Result.Failure(ProductErrors.ProductNotFoundByName(request.productName));
 
-        ShoppingCart? activeShoppingCart = await _shoppingCartRepository.GetActiveShoppingCartsByUsernameAsync(request.username, cancellationToken);
+        ShoppingCart? activeShoppingCart = await _shoppingCartRepository.GetActiveShoppingCartsByUsernameAsync(currentUsername, cancellationToken);
 
         if (activeShoppingCart is not null)
         {            
             ShoppingCartDetails? existingCartProduct = activeShoppingCart
                 .ShoppingCartDetails
-                .FirstOrDefault(x => x.ProductId == foundProduct.Id);
+                .FirstOrDefault(x => x.ProductId == foundProduct.Id);            
 
             if (existingCartProduct is not null)
-            {
+            {              
+                existingCartProduct.IsRemoved = false;
                 existingCartProduct.Quantity += request.quantity;
             }
             else
