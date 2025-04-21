@@ -10,4 +10,6 @@ public interface IApplicationDbContext
     public DbSet<ProductImage> ProductImage { get; }
 
     public DbSet<ProductCategory> ProductCategory { get; }
+
+    public DbSet<ShoppingCart> ShoppingCart { get; }
 }
