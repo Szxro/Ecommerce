@@ -18,7 +18,7 @@ public class ShoppingCartRepository
     {
         return await _appDbContext
                         .ShoppingCart
-                        .Include(x => x.ShoppingCartProducts)
+                        .Include(x => x.ShoppingCartDetails)
                         .Where(x => x.User.Username.Value == username && !x.IsSubmit)
                         .FirstOrDefaultAsync(cancellationToken);
     }

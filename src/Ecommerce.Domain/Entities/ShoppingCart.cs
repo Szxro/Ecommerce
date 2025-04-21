@@ -6,7 +6,7 @@ public class ShoppingCart : Entity
 {
     public ShoppingCart()
     {
-        ShoppingCartProducts = new HashSet<ShoppingCartProduct>();
+        ShoppingCartDetails = new HashSet<ShoppingCartDetails>();
     }
 
     public User User { get; set; } = null!;
@@ -17,5 +17,5 @@ public class ShoppingCart : Entity
 
     public int? TotalPrice { get; set; }
 
-    public ICollection<ShoppingCartProduct> ShoppingCartProducts { get; set; }
+    public ICollection<ShoppingCartDetails> ShoppingCartDetails { get; set; }
 }

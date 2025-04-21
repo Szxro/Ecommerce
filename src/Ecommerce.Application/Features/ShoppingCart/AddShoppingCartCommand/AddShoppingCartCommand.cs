@@ -40,8 +40,8 @@ public class AddShoppingCartCommandHandler : ICommandHandler<AddShoppingCartComm
 
         if (activeShoppingCart is not null)
         {            
-            ShoppingCartProduct? existingCartProduct = activeShoppingCart
-                .ShoppingCartProducts
+            ShoppingCartDetails? existingCartProduct = activeShoppingCart
+                .ShoppingCartDetails
                 .FirstOrDefault(x => x.ProductId == foundProduct.Id);
 
             if (existingCartProduct is not null)
@@ -50,14 +50,14 @@ public class AddShoppingCartCommandHandler : ICommandHandler<AddShoppingCartComm
             }
             else
             {
-                ShoppingCartProduct newProductCart = new ShoppingCartProduct
+                ShoppingCartDetails newProductCart = new ShoppingCartDetails
                 {
                     Quantity = request.quantity,
                     Product = foundProduct,
                     ShoppingCart = activeShoppingCart
                 };
 
-                activeShoppingCart.ShoppingCartProducts.Add(newProductCart);
+                activeShoppingCart.ShoppingCartDetails.Add(newProductCart);
 
                 _unitOfWork.ChangeTrackerToUnchanged(newProductCart.Product);
             }
@@ -77,7 +77,7 @@ public class AddShoppingCartCommandHandler : ICommandHandler<AddShoppingCartComm
                 TotalPrice = request.quantity * foundProduct.Price,                       
             };
 
-            shoppingCart.ShoppingCartProducts.Add(new ShoppingCartProduct
+            shoppingCart.ShoppingCartDetails.Add(new ShoppingCartDetails
             {
                 Product = foundProduct,
                 Quantity = request.quantity

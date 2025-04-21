@@ -8,7 +8,7 @@ using Ecommerce.WebApi.Common;
 
 namespace Ecommerce.WebApi.Controllers;
 
-[Route("api/shopping-cart")]
+[Route("api/cart")]
 [Authorize]
 [ApiController]
 public class ShoppingCartController : ControllerBase

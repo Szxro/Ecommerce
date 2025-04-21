@@ -65,5 +65,5 @@ public class AppDbContext
 
     public DbSet<ShoppingCart> ShoppingCart => Set<ShoppingCart>();
 
-    public DbSet<ShoppingCartProduct> ShoppingCartProduct => Set<ShoppingCartProduct>();
+    public DbSet<ShoppingCartDetails> ShoppingCartDetails => Set<ShoppingCartDetails>();
 }

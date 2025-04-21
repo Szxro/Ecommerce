@@ -2,7 +2,7 @@
 
 namespace Ecommerce.Domain.Entities;
 
-public class ShoppingCartProduct : IntermediaryEntity
+public class ShoppingCartDetails : IntermediaryEntity
 {
     public ShoppingCart ShoppingCart { get; set; } = null!;
 
@@ -13,4 +13,6 @@ public class ShoppingCartProduct : IntermediaryEntity
     public int ProductId { get; set; }
 
     public int Quantity { get; set; }
+
+    public bool IsRemoved { get; set; }
 }
