@@ -15,7 +15,7 @@ public class ShoppingCart : Entity
 
     public bool IsSubmit { get; set; }
 
-    public int? TotalPrice { get; set; }
+    public int TotalPrice { get; set; }
 
     public ICollection<ShoppingCartDetails> ShoppingCartDetails { get; set; }
 }
